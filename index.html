@@ -49,112 +49,121 @@
     </section>
 
     <div id="cardContainer">
-      <section class="form-section card-item" data-card-id="1">
-        <h2>2. Thông tin Thẻ #1</h2>
+  <section class="form-section card-item" data-card-id="1">
+    <h2>2. Thông tin Thẻ #1</h2>
 
-        <div class="form-group">
-          <label for="cardName_1">Họ và tên chủ thẻ:</label>
-          <input type="text" id="cardName_1" name="cardName_1" required />
+    <!-- ✅ Nút Xóa Thẻ -->
+    <button type="button" class="remove-card-btn" data-card-id="1">Xóa Thẻ</button>
+
+    <div class="form-group">
+      <label for="cardName_1">Họ và tên chủ thẻ:</label>
+      <input type="text" id="cardName_1" name="cardName_1" required />
+    </div>
+
+    <div class="form-group half-width">
+      <label for="cardNumber_1">4 số đuôi thẻ:</label>
+      <input type="text" id="cardNumber_1" name="cardNumber_1" maxlength="4" required />
+    </div>
+
+    <div class="form-group half-width">
+      <label for="cardType_1">Loại thẻ:</label>
+      <select id="cardType_1" name="cardType_1" required>
+        <option value="V">Visa</option>
+        <option value="M">MasterCard</option>
+        <option value="J">JCB</option>
+        <option value="n">Napas</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group half-width">
+        <label for="cardBank_1">Ngân hàng thẻ:</label>
+        <input type="text" id="cardBank_1" name="cardBank_1" required />
+      </div>
+
+      <div class="form-group half-width">
+        <label for="serviceType_1">Dịch vụ làm:</label>
+        <select id="serviceType_1" name="serviceType_1" class="service-selector card-input" required>
+          <option value="">-- Chọn Dịch vụ --</option>
+          <option value="DAO">ĐÁO</option>
+          <option value="RUT">RÚT</option>
+          <option value="DAO_RUT">ĐÁO+RÚT</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="service-details-container hidden" id="serviceDetails_1">
+      <div class="form-group">
+        <label for="transferAmount_1">Tiền chuyển:</label>
+        <input
+          type="text"
+          id="transferAmount_1"
+          name="transferAmount_1"
+          value="0"
+          class="card-input currency-input"
+          inputmode="numeric"
+          placeholder="0"
+        />
+      </div>
+
+      <div class="plain-metrics">
+        <div class="metric-row">
+          <span class="metric-label">Tổng tiền làm thẻ:</span>
+          <span class="metric-value"><span id="totalBillAmount_1">0</span> VNĐ</span>
         </div>
 
-        <div class="form-group half-width">
-          <label for="cardNumber_1">4 số đuôi thẻ:</label>
-          <input type="text" id="cardNumber_1" name="cardNumber_1" maxlength="4" required />
+        <div class="metric-row">
+          <span class="metric-label">Phí âm / Back khách:</span>
+          <span class="metric-value"><span id="differenceAmount_1">0</span> VNĐ</span>
+          <span class="metric-note">(tiền âm thẻ âm, tiền dương thẻ dư/ rút)</span>
+        </div>
+      </div>
+
+      <div class="bill-section">
+        <div class="bill-section-head">
+          <label>Nhập Bill:</label>
+          <button type="button" class="add-bill-btn" data-card-id="1">➕ Thêm Bill</button>
         </div>
 
-        <div class="form-group half-width">
-          <label for="cardType_1">Loại thẻ:</label>
-          <select id="cardType_1" name="cardType_1" required>
-            <option value="V">Visa</option>
-            <option value="M">MasterCard</option>
-            <option value="J">JCB</option>
-            <option value="n">Napas</option>
-          </select>
-        </div>
+        <!-- ✅ Đã đóng thẻ đúng -->
+        <div class="bill-details-wrapper" id="billDetails_1">
+          <div class="bill-row" data-bill-index="1">
+            <input type="text" class="bill-label" name="billLabel_1_1" value="Bill 1" readonly />
 
-        <div class="form-row">
-          <div class="form-group half-width">
-            <label for="cardBank_1">Ngân hàng thẻ:</label>
-            <input type="text" id="cardBank_1" name="cardBank_1" required />
-          </div>
-
-          <div class="form-group half-width">
-            <label for="serviceType_1">Dịch vụ làm:</label>
-            <select id="serviceType_1" name="serviceType_1" class="service-selector card-input" required>
-              <option value="">-- Chọn Dịch vụ --</option>
-              <option value="DAO">ĐÁO</option>
-              <option value="RUT">RÚT</option>
-              <option value="DAO_RUT">ĐÁO+RÚT</option>
-            </select>
-          </div>
-        </div>
-        <div class="service-details-container hidden" id="serviceDetails_1">
-          <div class="form-group">
-            <label for="transferAmount_1">Tiền chuyển:</label>
             <input
               type="text"
-              id="transferAmount_1"
-              name="transferAmount_1"
+              class="bill-amount card-input currency-input"
+              name="billAmount_1_1"
               value="0"
-              class="card-input currency-input"
               inputmode="numeric"
-              placeholder="0"
+              placeholder="Số tiền"
+              required
             />
+
+            <select class="bill-pos card-input pos-select" name="billPOS_1_1" required>
+              <option value="">-- Chọn POS --</option>
+            </select>
+
+            <select class="bill-hkd card-input hkd-select" name="billHKD_1_1" required>
+              <option value="">-- Chọn HKD --</option>
+            </select>
+
+            <select class="bill-machine card-input machine-select" name="billMachine_1_1" required>
+              <option value="">-- Chọn Máy POS --</option>
+            </select>
+
+            <input type="text" class="bill-batch card-input" name="billBatch_1_1" placeholder="Số lô" />
+            <input type="text" class="bill-invoice card-input" name="billInvoice_1_1" placeholder="Số hóa đơn" />
+
+            <button type="button" class="remove-bill-btn" title="Xóa bill">Xóa BILL</button>
           </div>
-          <div class="plain-metrics">
-            <div class="metric-row">
-              <span class="metric-label">Tổng tiền làm  thẻ :</span>
-              <span class="metric-value"><span id="totalBillAmount_1">0</span> VNĐ</span>
-            </div>
-
-            <div class="metric-row">
-              <span class="metric-label">Phí âm / Back khách:</span>
-              <span class="metric-value"><span id="differenceAmount_1">0</span> VNĐ</span>
-              <span class="metric-note">(tiền dương thẻ âm, tiền âm thừa/rút)</span>
-            </div>
-          </div>
-          <div class="bill-section">
-            <div class="bill-section-head">
-              <label>Nhập Bill:</label>
-              <button type="button" class="add-bill-btn" data-card-id="1">➕ Thêm Bill</button>
-            </div>
-            <div class="bill-details-wrapper" id="billDetails_1">
-             <div class="bill-row" data-bill-index="1">
-  <input type="text" class="bill-label" name="billLabel_1_1" value="Bill 1" readonly />
-
-  <input
-    type="text"
-    class="bill-amount card-input currency-input"
-    name="billAmount_1_1"
-    value="0"
-    inputmode="numeric"
-    placeholder="Số tiền"
-    required
-  />
-
-  <select class="bill-pos card-input pos-select" name="billPOS_1_1" required>
-    <option value="">-- Chọn POS --</option>
-  </select>
-
-  <select class="bill-hkd card-input hkd-select" name="billHKD_1_1" required>
-    <option value="">-- Chọn HKD --</option>
-  </select>
-
-  <select class="bill-machine card-input machine-select" name="billMachine_1_1" required>
-    <option value="">-- Chọn Máy POS --</option>
-  </select>
-
-  <input type="text" class="bill-batch card-input" name="billBatch_1_1" placeholder="Số lô" />
-  <input type="text" class="bill-invoice card-input" name="billInvoice_1_1" placeholder="Số hóa đơn" />
-
-  <button type="button" class="remove-bill-btn" title="Xóa bill">Xóa BILL</button>
-</div>
-
-
-        <button type="button" class="remove-card-btn" data-card-id="1">Xóa Thẻ này</button>
-        <hr />
-      </section>
+        </div>
+      </div>
     </div>
+
+    <hr />
+  </section>
+</div>
 
     <button type="button" id="addCardBtn">➕ Thêm Thẻ Mới</button>
 
