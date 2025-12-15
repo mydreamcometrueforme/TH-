@@ -1,0 +1,399 @@
+/* =========================
+   GLOBAL THEME
+========================= */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: "Times New Roman", Times, serif;
+  background: linear-gradient(
+    135deg,
+    #FFD1DC 0%,
+    #FFECB3 20%,
+    #E6FFB3 40%,
+    #B3FFE6 60%,
+    #B3D1FF 80%,
+    #E6B3FF 100%
+  );
+  background-attachment: fixed;
+}
+
+#mainForm {
+  max-width: 980px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 10px 18px rgba(0,0,0,0.12);
+}
+
+/* =========================
+   TITLES / HEADINGS
+========================= */
+.main-title {
+  text-align: center;
+  margin: 0 0 18px;
+  font-weight: 900;
+  font-size: 2.4em;
+  letter-spacing: 0.4px;
+  color: #1f1f1f;
+}
+
+h2 {
+  margin: 18px 0 14px;
+  font-weight: 900;
+  font-size: 1.35em;
+  color: #1a1a1a;
+  border-left: 6px solid rgba(0,0,0,0.25);
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.03);
+  border-radius: 6px;
+}
+
+h3 {
+  margin: 16px 0 10px;
+  font-weight: 800;
+  font-size: 1.1em;
+  color: #1a1a1a;
+}
+
+/* =========================
+   SECTIONS / LAYOUT
+========================= */
+.form-section {
+  margin-bottom: 22px;
+  padding: 14px 14px 16px;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.85);
+}
+
+/* Clear floats inside a section (for half-width fields) */
+.form-section::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+/* classic half-width (used in Section 1, etc.) */
+.form-group.half-width {
+  width: 49%;
+  float: left;
+}
+
+.form-group.half-width:nth-child(odd) { padding-right: 10px; }
+.form-group.half-width:nth-child(even) { padding-left: 10px; }
+
+/* Special row (Bank + Service) - overrides float layout */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+  clear: both;
+}
+
+.form-row .form-group.half-width {
+  float: none;
+  padding: 0 !important;
+  width: calc(50% - 6px);
+  min-width: 260px;
+}
+
+/* =========================
+   LABELS / INPUTS
+========================= */
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 800; /* đậm label */
+  color: #222;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 10px;
+  border: 1px solid rgba(0,0,0,0.18);
+  border-radius: 6px;
+  background: #fff;
+  outline: none;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 1em;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(0,0,0,0.35);
+}
+
+input[readonly] {
+  background: rgba(0,0,0,0.04);
+  color: rgba(0,0,0,0.55);
+}
+
+.currency-input { text-align: right; }
+
+.hidden { display: none !important; }
+
+/* =========================
+   CARD ITEM
+========================= */
+.card-item {
+  background: rgba(0,0,0,0.02);
+  position: relative;
+  padding-top: 26px;
+  clear: both;
+}
+
+/* =========================
+   PLAIN METRICS (NO "MÀU MÈ")
+   - Tổng tiền làm + Phí âm/Back khách
+========================= */
+.plain-metrics {
+  margin: 10px 0 14px;
+}
+
+.metric-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: baseline;
+  margin: 6px 0;
+}
+
+.metric-label {
+  font-weight: 800;
+  color: #222;
+}
+
+.metric-value {
+  font-weight: 800;
+  color: #222;
+}
+
+.metric-note {
+  font-size: 0.92em;
+  font-weight: 400;
+  color: #666;
+}
+
+/* =========================
+   BILL UI
+   Columns: Bill | Amount | POS | HKD | Machine | Batch | Invoice | X
+========================= */
+.bill-section {
+  border: 1px dashed rgba(0,0,0,0.18);
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.bill-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.add-bill-btn {
+  padding: 9px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 800;
+  font-family: "Times New Roman", Times, serif;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+}
+
+.add-bill-btn:hover { background: rgba(0,0,0,0.92); }
+
+.bill-row {
+  display: grid;
+  grid-template-columns:
+    78px
+    minmax(130px, 1.2fr)
+    minmax(90px, 0.8fr)
+    minmax(170px, 1.0fr)
+    minmax(120px, 0.9fr)
+    minmax(95px, 0.75fr)
+    minmax(120px, 0.9fr)
+    42px;
+  gap: 8px;
+  align-items: end;
+  margin-top: 10px;
+}
+
+.bill-row input,
+.bill-row select {
+  width: 100%;
+}
+
+.remove-bill-btn {
+  height: 42px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 900;
+  background: rgba(0,0,0,0.18);
+  color: #111;
+}
+
+.remove-bill-btn:hover {
+  background: rgba(0,0,0,0.26);
+}
+
+/* Auto-locked machine select (POS != BV) */
+.machine-select.auto-locked {
+  pointer-events: none;
+  background: rgba(0,0,0,0.04);
+  color: rgba(0,0,0,0.55);
+}
+
+/* Responsive bill grid */
+@media (max-width: 980px) {
+  #mainForm { padding: 20px; }
+  .bill-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .bill-row .bill-label { grid-column: 1 / -1; }
+  .bill-row .remove-bill-btn { grid-column: 2; justify-self: end; }
+}
+
+/* =========================
+   SUMMARY / CALC BLOCKS (MỤC 3)
+========================= */
+.calculation-result {
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 12px;
+  border-radius: 8px;
+  margin: 10px 0 14px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.summary-item label {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 900;
+}
+
+.summary-item p {
+  margin: 0;
+  font-size: 1.15em;
+  font-weight: 900;
+  color: #111;
+}
+
+/* =========================
+   BREAKDOWN TABLE
+========================= */
+.breakdown { margin-top: 14px; }
+
+.breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.breakdown-table th,
+.breakdown-table td {
+  border-bottom: 1px solid rgba(0,0,0,0.10);
+  padding: 10px 8px;
+  text-align: center;
+  font-size: 0.98em;
+}
+
+.breakdown-table th {
+  font-weight: 900;
+  background: rgba(0,0,0,0.04);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+#addCardBtn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 900;
+  font-family: "Times New Roman", Times, serif;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  margin: 10px 0 18px;
+}
+
+#addCardBtn:hover { background: rgba(0,0,0,0.92); }
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 900;
+  font-family: "Times New Roman", Times, serif;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  margin-top: 10px;
+}
+
+.submit-btn:hover { background: rgba(0,0,0,0.92); }
+
+.remove-card-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-weight: 900;
+  font-family: "Times New Roman", Times, serif;
+  background: rgba(0,0,0,0.16);
+  color: #111;
+}
+
+.remove-card-btn:hover { background: rgba(0,0,0,0.24); }
+
+/* =========================
+   MOBILE: half-width -> full width
+========================= */
+@media (max-width: 720px) {
+  .form-group.half-width {
+    width: 100%;
+    float: none;
+    padding: 0 !important;
+  }
+  .form-row .form-group.half-width {
+    width: 100%;
+    min-width: unset;
+  }
+}
