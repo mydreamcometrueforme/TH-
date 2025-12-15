@@ -11,7 +11,6 @@
   <form id="mainForm">
     <h1 class="main-title">BÁO ĐƠN</h1>
 
-    <!-- 1. Thông tin Đơn -->
     <section class="form-section">
       <h2>1. Thông tin Đơn</h2>
 
@@ -49,7 +48,6 @@
       </div>
     </section>
 
-    <!-- 2. Thông tin Thẻ -->
     <div id="cardContainer">
       <section class="form-section card-item" data-card-id="1">
         <h2>2. Thông tin Thẻ #1</h2>
@@ -74,7 +72,6 @@
           </select>
         </div>
 
-        <!-- Ngân hàng + Dịch vụ cùng 1 dòng -->
         <div class="form-row">
           <div class="form-group half-width">
             <label for="cardBank_1">Ngân hàng thẻ:</label>
@@ -91,11 +88,7 @@
             </select>
           </div>
         </div>
-
-        <!-- Chi tiết theo dịch vụ -->
         <div class="service-details-container hidden" id="serviceDetails_1">
-
-          <!-- Tiền chuyển (định dạng tiền tệ) -->
           <div class="form-group">
             <label for="transferAmount_1">Tiền chuyển:</label>
             <input
@@ -108,8 +101,6 @@
               placeholder="0"
             />
           </div>
-
-          <!-- Tổng tiền làm + Phí âm/Back khách (không màu mè) -->
           <div class="plain-metrics">
             <div class="metric-row">
               <span class="metric-label">Tổng tiền làm  thẻ :</span>
@@ -122,14 +113,11 @@
               <span class="metric-note">(tiền dương thẻ âm, tiền âm thừa/rút)</span>
             </div>
           </div>
-
-          <!-- BILL -->
           <div class="bill-section">
             <div class="bill-section-head">
               <label>Nhập Bill:</label>
               <button type="button" class="add-bill-btn" data-card-id="1">➕ Thêm Bill</button>
             </div>
-
             <div class="bill-details-wrapper" id="billDetails_1">
              <div class="bill-row" data-bill-index="1">
   <input type="text" class="bill-label" name="billLabel_1_1" value="Bill 1" readonly />
@@ -170,17 +158,14 @@
 
     <button type="button" id="addCardBtn">➕ Thêm Thẻ Mới</button>
 
-    <!-- 3. Tính phí -->
     <section class="form-section final-summary">
       <h2>3. Tính phí</h2>
 
-      <!-- Tổng tiền làm (tổng bill toàn bộ thẻ) -->
       <div class="calculation-result summary-item">
         <label>Tổng tiền làm (tổng bill toàn bộ thẻ):</label>
         <p id="totalBillAll">0 VNĐ</p>
       </div>
 
-      <!-- Phí thu khách % -->
       <div class="form-group">
         <label for="feePercentAll">Phí thu khách (% trên tổng tiền làm):</label>
         <input
@@ -194,7 +179,6 @@
         />
       </div>
 
-      <!-- Phí ship ngay dưới phí thu khách % -->
       <div class="form-group">
         <label for="shipFee">Phí ship:</label>
         <input
@@ -207,8 +191,6 @@
           placeholder="0"
         />
       </div>
-
-      <!-- Phí chuyển về % -->
       <div class="form-group">
         <label for="returnFeePercentAll">Phí chuyển về (%):</label>
         <input
@@ -221,14 +203,11 @@
           class="card-input"
         />
       </div>
-
-      <!-- Sau % chuyển về: Tổng thu khách -->
       <div class="calculation-result summary-item">
         <label>Tổng thu khách:</label>
         <p id="totalFeeCollectedAll">0 VNĐ</p>
       </div>
 
-      <!-- Phí thực thu (nhập) -->
       <div class="form-group">
         <label for="actualFeeReceived">Phí thực thu:</label>
         <input
@@ -243,13 +222,11 @@
         <small style="display:block;color:#666;margin-top:6px;">Bỏ trống nếu chưa thu.</small>
       </div>
 
-      <!-- Tổng trả khách -->
       <div class="calculation-result summary-item">
         <label>Tổng trả khách:</label>
         <p id="totalCustomerPayment">0 VNĐ</p>
       </div>
 
-      <!-- Thanh toán phí để cuối -->
       <div class="form-group">
         <label for="feePaymentStatus">Thanh toán phí:</label>
         <select id="feePaymentStatus" name="feePaymentStatus" required>
