@@ -1,12 +1,11 @@
 /* =========================
-   GLOBAL THEME
+   GLOBAL
 ========================= */
 * { box-sizing: border-box; }
 
 body {
-  margin: 0;
-  padding: 20px;
   font-family: "Times New Roman", Times, serif;
+  /* Nền Pastel Cầu Vồng */
   background: linear-gradient(
     135deg,
     #FFD1DC 0%,
@@ -17,320 +16,304 @@ body {
     #E6B3FF 100%
   );
   background-attachment: fixed;
-}
-
-#mainForm {
-  max-width: 980px;
-  margin: 0 auto;
-  background: #ffffff;
-  padding: 28px;
-  border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 10px 18px rgba(0,0,0,0.12);
+  padding: 18px;
+  margin: 0;
+  line-height: 1.35;
 }
 
 /* =========================
-   TITLES / HEADINGS
+   FORM CONTAINER (1/2 WIDTH)
+========================= */
+#mainForm {
+  /* giảm còn 1/2 độ rộng: ưu tiên 50vw, nhưng không quá to/nhỏ */
+  width: min(50vw, 560px);
+  min-width: 360px;
+  max-width: 560px;
+
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.18);
+}
+
+/* Mobile: full width */
+@media (max-width: 720px) {
+  #mainForm {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 16px;
+  }
+}
+
+/* =========================
+   TITLES
 ========================= */
 .main-title {
   text-align: center;
-  margin: 0 0 18px;
-  font-weight: 900;
-  font-size: 2.4em;
-  letter-spacing: 0.4px;
-  color: #1f1f1f;
+  color: #222;
+  padding-bottom: 10px;
+  font-weight: 800;
+  font-size: 2.2em;
+  margin: 0 0 18px 0;
 }
 
 h2 {
-  margin: 18px 0 14px;
-  font-weight: 900;
-  font-size: 1.35em;
-  color: #1a1a1a;
-  border-left: 6px solid rgba(0,0,0,0.25);
-  padding: 10px 12px;
-  background: rgba(0,0,0,0.03);
-  border-radius: 6px;
+  color: #0b57d0;
+  margin: 0 0 14px 0;
+  border-left: 5px solid #0b57d0;
+  padding: 10px 10px;
+  background-color: #f0f8ff;
+  font-weight: 800;
 }
 
 h3 {
-  margin: 16px 0 10px;
+  color: #2b2f33;
+  margin: 12px 0 8px 0;
+  font-size: 1.05em;
   font-weight: 800;
-  font-size: 1.1em;
-  color: #1a1a1a;
 }
 
 /* =========================
-   SECTIONS / LAYOUT
+   SECTIONS + SPACING
 ========================= */
 .form-section {
-  margin-bottom: 22px;
-  padding: 14px 14px 16px;
-  border: 1px solid rgba(0,0,0,0.10);
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid #e3e6ea;
   border-radius: 8px;
-  background: rgba(255,255,255,0.85);
 }
 
-/* Clear floats inside a section (for half-width fields) */
+/* Clear float nếu bạn vẫn dùng half-width dạng float */
 .form-section::after {
   content: "";
   display: block;
   clear: both;
 }
 
+/* =========================
+   FORM GROUPS
+========================= */
 .form-group {
+  margin-bottom: 10px; /* cân đối, đỡ dài */
   width: 100%;
-  margin-bottom: 14px;
 }
 
-/* classic half-width (used in Section 1, etc.) */
+/* 2 cột */
 .form-group.half-width {
-  width: 49%;
+  width: 50%;
   float: left;
+  padding-right: 8px;
 }
 
-.form-group.half-width:nth-child(odd) { padding-right: 10px; }
-.form-group.half-width:nth-child(even) { padding-left: 10px; }
+.form-group.half-width:nth-child(even) {
+  padding-right: 0;
+  padding-left: 8px;
+}
 
-/* Special row (Bank + Service) - overrides float layout */
+/* Nếu bạn dùng .form-row trong HTML (bank + service) */
 .form-row {
   display: flex;
-  flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 14px;
-  clear: both;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
-
 .form-row .form-group.half-width {
   float: none;
-  padding: 0 !important;
   width: calc(50% - 6px);
-  min-width: 260px;
+  padding: 0;
+}
+
+@media (max-width: 720px) {
+  .form-group.half-width,
+  .form-row .form-group.half-width {
+    width: 100%;
+    float: none;
+    padding: 0;
+  }
 }
 
 /* =========================
-   LABELS / INPUTS
+   LABELS + INPUTS
 ========================= */
 label {
   display: block;
   margin-bottom: 6px;
-  font-weight: 800; /* đậm label */
-  color: #222;
+  font-weight: 800;   /* tô đậm mục */
+  color: #333;
+  font-size: 0.95em;
 }
 
 input[type="text"],
 input[type="number"],
 input[type="date"],
-select,
-textarea {
+select {
   width: 100%;
-  padding: 10px 10px;
-  border: 1px solid rgba(0,0,0,0.18);
+  padding: 9px 10px;
+  border: 1px solid #cfd6dd;
   border-radius: 6px;
-  background: #fff;
   outline: none;
-  font-family: "Times New Roman", Times, serif;
-  font-size: 1em;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
-select:focus,
-textarea:focus {
-  border-color: rgba(0,0,0,0.35);
+  background: #fff;
 }
 
 input[readonly] {
-  background: rgba(0,0,0,0.04);
-  color: rgba(0,0,0,0.55);
+  background-color: #f6f7f9;
+  color: #6c757d;
 }
 
-.currency-input { text-align: right; }
+/* Auto-locked máy POS (nếu bạn dùng class này) */
+.auto-locked {
+  background: #f6f7f9;
+}
 
-.hidden { display: none !important; }
+/* Hidden */
+.hidden {
+  display: none !important;
+}
 
 /* =========================
-   CARD ITEM
+   CARD
 ========================= */
 .card-item {
-  background: rgba(0,0,0,0.02);
+  background-color: #fafafa;
   position: relative;
-  padding-top: 26px;
-  clear: both;
+  padding-top: 14px;
+}
+
+/* Nút xóa thẻ */
+.remove-card-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #ffb300;
+  color: #111;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 800;
 }
 
 /* =========================
-   PLAIN METRICS (NO "MÀU MÈ")
-   - Tổng tiền làm + Phí âm/Back khách
+   METRICS (Tổng bill / phí âm)
 ========================= */
 .plain-metrics {
-  margin: 10px 0 14px;
+  margin: 10px 0 12px 0;
+  padding: 10px;
+  border: 1px solid #e3e6ea;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .metric-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 6px 10px;
   align-items: baseline;
-  margin: 6px 0;
+  margin-bottom: 6px;
 }
+.metric-row:last-child { margin-bottom: 0; }
 
-.metric-label {
-  font-weight: 800;
-  color: #222;
-}
-
-.metric-value {
-  font-weight: 800;
-  color: #222;
-}
-
-.metric-note {
-  font-size: 0.92em;
-  font-weight: 400;
-  color: #666;
-}
+.metric-label { font-weight: 800; color: #222; }
+.metric-value { font-weight: 800; color: #222; }
+.metric-note  { font-size: 0.9em; color: #666; }
 
 /* =========================
-   BILL UI
-   Columns: Bill | Amount | POS | HKD | Machine | Batch | Invoice | X
+   BILL SECTION
 ========================= */
 .bill-section {
-  border: 1px dashed rgba(0,0,0,0.18);
-  padding: 12px;
-  border-radius: 8px;
-  background: #fff;
+  margin-top: 10px;
 }
 
 .bill-section-head {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 8px;
 }
+.bill-section-head label {
+  margin: 0;
+}
 
+/* Nút thêm bill */
 .add-bill-btn {
-  padding: 9px 12px;
+  background-color: #1a73e8;
+  color: #fff;
   border: none;
+  padding: 8px 10px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 800;
-  font-family: "Times New Roman", Times, serif;
-  background: rgba(0,0,0,0.85);
-  color: #fff;
 }
 
-.add-bill-btn:hover { background: rgba(0,0,0,0.92); }
+/* Wrapper để cuộn ngang khi form hẹp */
+.bill-details-wrapper {
+  overflow-x: auto;
+  padding-bottom: 4px;
+  border: 1px dashed #e3e6ea;
+  border-radius: 8px;
+  background: #fff;
+}
 
+/* 1 dòng bill nhiều cột: dùng grid cho đều */
 .bill-row {
   display: grid;
-  grid-template-columns:
-    78px
-    minmax(130px, 1.2fr)
-    minmax(90px, 0.8fr)
-    minmax(170px, 1.0fr)
-    minmax(120px, 0.9fr)
-    minmax(95px, 0.75fr)
-    minmax(120px, 0.9fr)
-    42px;
+  grid-template-columns: 84px 140px 74px 170px 110px 90px 120px 90px; 
   gap: 8px;
   align-items: end;
-  margin-top: 10px;
+  padding: 10px;
+  min-width: 860px; /* để có thể cuộn ngang trong form hẹp */
+  border-bottom: 1px solid #f0f0f0;
+}
+.bill-row:last-child { border-bottom: none; }
+
+.bill-label {
+  background: #f6f7f9;
+  font-weight: 800;
 }
 
-.bill-row input,
-.bill-row select {
-  width: 100%;
-}
-
+/* nút xóa bill */
 .remove-bill-btn {
-  height: 42px;
+  background: #e53935;
+  color: #fff;
   border: none;
+  padding: 8px 10px;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 900;
-  background: rgba(0,0,0,0.18);
-  color: #111;
-}
-
-.remove-bill-btn:hover {
-  background: rgba(0,0,0,0.26);
-}
-
-/* Auto-locked machine select (POS != BV) */
-.machine-select.auto-locked {
-  pointer-events: none;
-  background: rgba(0,0,0,0.04);
-  color: rgba(0,0,0,0.55);
-}
-
-/* Responsive bill grid */
-@media (max-width: 980px) {
-  #mainForm { padding: 20px; }
-  .bill-row {
-    grid-template-columns: 1fr 1fr;
-  }
-  .bill-row .bill-label { grid-column: 1 / -1; }
-  .bill-row .remove-bill-btn { grid-column: 2; justify-self: end; }
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 /* =========================
-   SUMMARY / CALC BLOCKS (MỤC 3)
+   SUMMARY (MỤC 3)
 ========================= */
-.calculation-result {
-  background: rgba(0,0,0,0.03);
-  border: 1px solid rgba(0,0,0,0.08);
-  padding: 12px;
-  border-radius: 8px;
-  margin: 10px 0 14px;
-}
-
-.summary-item {
+.final-summary .summary-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px dotted #ccc;
 }
-
-.summary-item label {
+.final-summary .summary-item label {
   margin: 0;
-  font-size: 1.1em;
-  font-weight: 900;
+  font-size: 1.05em;
 }
-
-.summary-item p {
+.final-summary .summary-item p {
   margin: 0;
-  font-size: 1.15em;
-  font-weight: 900;
+  font-weight: 800;
   color: #111;
 }
 
-/* =========================
-   BREAKDOWN TABLE
-========================= */
-.breakdown { margin-top: 14px; }
-
-.breakdown-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.12);
+.calculation-result {
+  background-color: #f6f7f9;
+  padding: 10px 12px;
   border-radius: 8px;
-  overflow: hidden;
-}
-
-.breakdown-table th,
-.breakdown-table td {
-  border-bottom: 1px solid rgba(0,0,0,0.10);
-  padding: 10px 8px;
-  text-align: center;
-  font-size: 0.98em;
-}
-
-.breakdown-table th {
-  font-weight: 900;
-  background: rgba(0,0,0,0.04);
+  border: 1px solid #e3e6ea;
+  margin-top: 8px;
+  margin-bottom: 10px;
 }
 
 /* =========================
@@ -339,61 +322,31 @@ input[readonly] {
 #addCardBtn {
   display: block;
   width: 100%;
-  padding: 14px;
+  padding: 12px;
+  background-color: #2e7d32;
+  color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: 900;
-  font-family: "Times New Roman", Times, serif;
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  margin: 10px 0 18px;
+  font-size: 1.05em;
+  font-weight: 800;
+  margin-bottom: 16px;
 }
 
-#addCardBtn:hover { background: rgba(0,0,0,0.92); }
+#addCardBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .submit-btn {
   width: 100%;
-  padding: 14px;
+  padding: 13px;
+  background-color: #0b57d0;
+  color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: 900;
-  font-family: "Times New Roman", Times, serif;
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  margin-top: 10px;
-}
-
-.submit-btn:hover { background: rgba(0,0,0,0.92); }
-
-.remove-card-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  border: none;
-  border-radius: 8px;
-  padding: 7px 10px;
-  cursor: pointer;
-  font-weight: 900;
-  font-family: "Times New Roman", Times, serif;
-  background: rgba(0,0,0,0.16);
-  color: #111;
-}
-
-.remove-card-btn:hover { background: rgba(0,0,0,0.24); }
-
-/* =========================
-   MOBILE: half-width -> full width
-========================= */
-@media (max-width: 720px) {
-  .form-group.half-width {
-    width: 100%;
-    float: none;
-    padding: 0 !important;
-  }
-  .form-row .form-group.half-width {
-    width: 100%;
-    min-width: unset;
-  }
+  font-size: 1.1em;
+  font-weight: 800;
+  margin-top: 12px;
 }
