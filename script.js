@@ -7,7 +7,7 @@ const MAX_BILLS_PER_CARD = 10;
 /* =========================================================
    GOOGLE SHEET WEB APP (CẬP NHẬT 2 DÒNG NÀY)
 ========================================================= */
-const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzeiFlLz0MNRrLPy17B20HSDDVdoRav4YqKc6mdKWRUxOGiQ0rlFcex3989gxPKkAfu/exec";
+const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyeJqGboIntGGg4l28EyzRl4zHdQkftp6lbns14czS83Z24Ym5uC8iUztaGnE2LfOtS/exec";
 const GOOGLE_SHEET_SECRET = "1"; // trùng SECRET trong Apps Script
 
 /* =========================================================
