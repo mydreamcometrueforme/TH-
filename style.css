@@ -1,3 +1,6 @@
+/* =========================
+   GLOBAL THEME
+========================= */
 * { box-sizing: border-box; }
 
 body {
@@ -26,6 +29,9 @@ body {
   box-shadow: 0 10px 18px rgba(0,0,0,0.12);
 }
 
+/* =========================
+   TITLES / HEADINGS
+========================= */
 .main-title {
   text-align: center;
   margin: 0 0 18px;
@@ -53,14 +59,18 @@ h3 {
   color: #1a1a1a;
 }
 
+/* =========================
+   SECTIONS / LAYOUT
+========================= */
 .form-section {
   margin-bottom: 22px;
-  padding: 18px;
+  padding: 14px 14px 16px;
   border: 1px solid rgba(0,0,0,0.10);
   border-radius: 8px;
   background: rgba(255,255,255,0.85);
 }
 
+/* Clear floats inside a section (for half-width fields) */
 .form-section::after {
   content: "";
   display: block;
@@ -71,14 +81,17 @@ h3 {
   width: 100%;
   margin-bottom: 14px;
 }
+
+/* classic half-width (used in Section 1, etc.) */
 .form-group.half-width {
-  width: 50%;
+  width: 49%;
   float: left;
 }
 
-.form-group.half-width:nth-child(odd) { padding-right: 24px; }
-.form-group.half-width:nth-child(even) { padding-left: 24px; }
+.form-group.half-width:nth-child(odd) { padding-right: 10px; }
+.form-group.half-width:nth-child(even) { padding-left: 10px; }
 
+/* Special row (Bank + Service) - overrides float layout */
 .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -93,10 +106,14 @@ h3 {
   width: calc(50% - 6px);
   min-width: 260px;
 }
+
+/* =========================
+   LABELS / INPUTS
+========================= */
 label {
   display: block;
   margin-bottom: 6px;
-  font-weight: 800;
+  font-weight: 800; /* đậm label */
   color: #222;
 }
 
@@ -132,6 +149,9 @@ input[readonly] {
 
 .hidden { display: none !important; }
 
+/* =========================
+   CARD ITEM
+========================= */
 .card-item {
   background: rgba(0,0,0,0.02);
   position: relative;
@@ -139,6 +159,10 @@ input[readonly] {
   clear: both;
 }
 
+/* =========================
+   PLAIN METRICS (NO "MÀU MÈ")
+   - Tổng tiền làm + Phí âm/Back khách
+========================= */
 .plain-metrics {
   margin: 10px 0 14px;
 }
@@ -167,6 +191,11 @@ input[readonly] {
   color: #666;
 }
 
+/* =========================
+   BILL UI
+   Columns: Bill | Amount | POS | HKD | Machine | Batch | Invoice | X
+========================= */
+.bill-section {
   border: 1px dashed rgba(0,0,0,0.18);
   padding: 12px;
   border-radius: 8px;
@@ -229,11 +258,14 @@ input[readonly] {
   background: rgba(0,0,0,0.26);
 }
 
+/* Auto-locked machine select (POS != BV) */
 .machine-select.auto-locked {
   pointer-events: none;
   background: rgba(0,0,0,0.04);
   color: rgba(0,0,0,0.55);
 }
+
+/* Responsive bill grid */
 @media (max-width: 980px) {
   #mainForm { padding: 20px; }
   .bill-row {
@@ -242,6 +274,10 @@ input[readonly] {
   .bill-row .bill-label { grid-column: 1 / -1; }
   .bill-row .remove-bill-btn { grid-column: 2; justify-self: end; }
 }
+
+/* =========================
+   SUMMARY / CALC BLOCKS (MỤC 3)
+========================= */
 .calculation-result {
   background: rgba(0,0,0,0.03);
   border: 1px solid rgba(0,0,0,0.08);
@@ -270,6 +306,9 @@ input[readonly] {
   color: #111;
 }
 
+/* =========================
+   BREAKDOWN TABLE
+========================= */
 .breakdown { margin-top: 14px; }
 
 .breakdown-table {
@@ -294,6 +333,9 @@ input[readonly] {
   background: rgba(0,0,0,0.04);
 }
 
+/* =========================
+   BUTTONS
+========================= */
 #addCardBtn {
   display: block;
   width: 100%;
@@ -341,6 +383,9 @@ input[readonly] {
 
 .remove-card-btn:hover { background: rgba(0,0,0,0.24); }
 
+/* =========================
+   MOBILE: half-width -> full width
+========================= */
 @media (max-width: 720px) {
   .form-group.half-width {
     width: 100%;
