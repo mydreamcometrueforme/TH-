@@ -52,7 +52,6 @@
   <section class="form-section card-item" data-card-id="1">
     <h2>2. Thông tin Thẻ #1</h2>
 
-    <!-- ✅ Nút Xóa Thẻ -->
     <button type="button" class="remove-card-btn" data-card-id="1">Xóa Thẻ</button>
 
     <div class="form-group">
@@ -125,7 +124,7 @@
           <button type="button" class="add-bill-btn" data-card-id="1">➕ Thêm Bill</button>
         </div>
 
-        <!-- ✅ Đã đóng thẻ đúng -->
+
         <div class="bill-details-wrapper" id="billDetails_1">
           <div class="bill-row" data-bill-index="1">
             <input type="text" class="bill-label" name="billLabel_1_1" value="Bill 1" readonly />
@@ -200,6 +199,20 @@
           placeholder="0"
         />
       </div>
+      
+      <div class="form-group">
+  <label for="negativeCardFee">Thẻ âm:</label>
+  <input
+    type="text"
+    id="negativeCardFee"
+    name="negativeCardFee"
+    value="0"
+    class="card-input currency-input"
+    inputmode="numeric"
+    placeholder="0"
+  />
+</div>
+
       <div class="form-group">
         <label for="returnFeePercentAll">Phí chuyển về (%):</label>
         <input
@@ -212,6 +225,7 @@
           class="card-input"
         />
       </div>
+      
       <div class="calculation-result summary-item">
         <label>Tổng thu khách:</label>
         <p id="totalFeeCollectedAll">0 VNĐ</p>
