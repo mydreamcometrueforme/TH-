@@ -100,7 +100,7 @@
           </div>
         </div>
 
-        <!-- ✅ QUAN TRỌNG: fieldset + disabled để required bên trong không chặn submit khi chưa chọn dịch vụ -->
+        <!-- ✅ fieldset + disabled: required bên trong không chặn submit khi chưa chọn dịch vụ -->
         <fieldset class="service-details-container hidden" id="serviceDetails_1" disabled>
           <div class="form-group">
             <label for="transferAmount_1">Tiền chuyển:</label>
@@ -183,23 +183,23 @@
         <p id="totalBillAll">0 VNĐ</p>
       </div>
 
-      <!-- ✅ SỬA: không còn div form-group lồng lỗi -->
       <div class="form-group">
         <label for="feePercentAll">Phí thu khách (% trên tổng tiền làm):</label>
+        <!-- ✅ type=text để cho phép nhập chữ => bật phí cứng -->
         <input
-          type="number"
+          type="text"
           id="feePercentAll"
           name="feePercentAll"
-          min="0"
-          step="0.01"
           value=""
           class="card-input"
-          placeholder="Nhập % (vd 1.2)"
+          inputmode="decimal"
+          placeholder="Nhập % (vd 1.2 hoặc 1,2). Nhập chữ để dùng phí cứng"
         />
       </div>
 
+      <!-- ✅ Phí cứng VNĐ (auto theo % nếu % hợp lệ, hoặc user nhập tay) -->
       <div class="form-group hidden" id="feeFixedGroup">
-        <label for="feeFixedAll">Phí cứng thu khách:</label>
+        <label for="feeFixedAll">Phí cứng thu khách (VNĐ):</label>
         <input
           type="text"
           id="feeFixedAll"
@@ -207,7 +207,7 @@
           value=""
           class="card-input currency-input"
           inputmode="numeric"
-          placeholder="Tự nhảy từ % (có thể sửa tay)"
+          placeholder="Tự nhảy từ % (hoặc nhập tay nếu % không hợp lệ)"
         />
       </div>
 
