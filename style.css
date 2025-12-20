@@ -1,6 +1,3 @@
-/* =========================================================
- 1) THEME / RESET
-========================================================= */
 :root{
   --bg1:#FFD1DC;
   --bg2:#FFECB3;
@@ -9,16 +6,16 @@
   --bg5:#B3D1FF;
   --bg6:#E6B3FF;
 
-  --text:#1a1a1a;
+  --text:#1b1b1b;
   --muted:#666;
-  --border: rgba(0,0,0,0.12);
-  --shadow: 0 10px 18px rgba(0,0,0,0.12);
-  --radius: 10px;
-  --btn: rgba(0,0,0,0.86);
-  --btnHover: rgba(0,0,0,0.95);
+  --border:rgba(0,0,0,0.12);
+  --border2:rgba(0,0,0,0.18);
+  --shadow:0 10px 18px rgba(0,0,0,0.12);
+  --radius:10px;
+  --radius-sm:8px;
 }
 
-* { box-sizing: border-box; }
+*{ box-sizing:border-box; }
 
 body{
   margin:0;
@@ -33,86 +30,85 @@ body{
     var(--bg5) 80%,
     var(--bg6) 100%
   );
-  background-attachment: fixed;
+  background-attachment:fixed;
 }
 
-/* =========================================================
- 2) FORM WRAP
-========================================================= */
 #mainForm{
-  max-width: 980px;
-  margin: 0 auto;
+  max-width:980px;
+  margin:0 auto;
   background:#fff;
-  padding: 26px;
-  border-radius: var(--radius);
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: var(--shadow);
+  padding:28px;
+  border-radius:var(--radius);
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:var(--shadow);
 }
 
-/* =========================================================
- 3) TITLES
-========================================================= */
 .main-title{
   text-align:center;
-  margin: 0 0 18px;
-  font-weight: 900;
-  font-size: 2.3em;
-  letter-spacing: 0.4px;
+  margin:0 0 18px;
+  font-weight:900;
+  font-size:2.4em;
+  letter-spacing:0.4px;
+  color:#111;
 }
 
 h2{
-  margin: 18px 0 12px;
-  font-weight: 900;
-  font-size: 1.35em;
-  border-left: 6px solid rgba(0,0,0,0.25);
-  padding: 10px 12px;
-  background: rgba(0,0,0,0.03);
-  border-radius: 8px;
+  margin:18px 0 14px;
+  font-weight:900;
+  font-size:1.35em;
+  color:#111;
+  border-left:6px solid rgba(0,0,0,0.25);
+  padding:10px 12px;
+  background:rgba(0,0,0,0.03);
+  border-radius:6px;
 }
 
-/* =========================================================
- 4) LAYOUT HELPERS
-========================================================= */
+.section-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.section-head h2{ margin:0; flex:1; }
+
 .form-section{
-  margin-bottom: 18px;
-  padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: rgba(255,255,255,0.86);
+  margin-bottom:22px;
+  padding:14px 14px 16px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:rgba(255,255,255,0.88);
 }
-
-.grid{
-  display: grid;
-  gap: 12px;
-}
-
-.grid-2{
-  grid-template-columns: repeat(2, minmax(0,1fr));
-}
-
-@media (max-width: 720px){
-  .grid-2{ grid-template-columns: 1fr; }
-}
-
-.form-group{ width:100%; }
-
-.hidden{ display:none !important; }
-
-.hint{
+.form-section::after{
+  content:"";
   display:block;
-  margin-top: 6px;
-  font-size: 0.93em;
-  color: var(--muted);
-  line-height: 1.35;
+  clear:both;
 }
 
-/* =========================================================
- 5) INPUTS
-========================================================= */
+.form-group{ width:100%; margin-bottom:14px; }
+
+.form-group.half-width{ width:49%; float:left; }
+.form-group.half-width:nth-child(odd){ padding-right:10px; }
+.form-group.half-width:nth-child(even){ padding-left:10px; }
+
+.form-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:14px;
+  clear:both;
+}
+.form-row .form-group.half-width{
+  float:none;
+  padding:0 !important;
+  width:calc(50% - 6px);
+  min-width:260px;
+}
+
 label{
   display:block;
-  margin-bottom: 6px;
-  font-weight: 800;
+  margin-bottom:6px;
+  font-weight:800;
+  color:#222;
 }
 
 input[type="text"],
@@ -121,85 +117,92 @@ input[type="date"],
 select,
 textarea{
   width:100%;
-  padding: 10px 10px;
-  border: 1px solid rgba(0,0,0,0.18);
-  border-radius: 8px;
-  outline: none;
-  font-family:"Times New Roman", Times, serif;
-  font-size: 1em;
+  padding:10px 10px;
+  border:1px solid var(--border2);
+  border-radius:8px;
   background:#fff;
+  outline:none;
+  font-family:"Times New Roman", Times, serif;
+  font-size:1em;
 }
-
-input:focus, select:focus, textarea:focus{
-  border-color: rgba(0,0,0,0.35);
-}
+input:focus,
+select:focus,
+textarea:focus{ border-color:rgba(0,0,0,0.35); }
 
 input[readonly]{
-  background: rgba(0,0,0,0.04);
-  color: rgba(0,0,0,0.60);
+  background:rgba(0,0,0,0.04);
+  color:rgba(0,0,0,0.55);
+  opacity:0.9;
 }
 
 .currency-input{ text-align:right; }
+.hidden{ display:none !important; }
 
-.auto-locked{
-  pointer-events:none;
-  background: rgba(0,0,0,0.04);
-  color: rgba(0,0,0,0.55);
+.hint{
+  display:block;
+  color:var(--muted);
+  margin-top:6px;
 }
 
-/* =========================================================
- 6) CARD HEADER
-========================================================= */
-.card-header{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap: 12px;
+.card-item{
+  background:rgba(0,0,0,0.02);
+  position:relative;
+  padding-top:18px;
+  clear:both;
 }
 
-.card-title{ margin:0; width:100%; }
-
-/* =========================================================
- 7) SERVICE DETAILS (fieldset)
-========================================================= */
-.service-details-container{
-  border: 0;
-  padding: 0;
-  margin: 0;
-  min-inline-size: auto;
+/* reset fieldset */
+fieldset.service-details-container{
+  border:0;
+  padding:0;
+  margin:0;
+  min-inline-size:0;
 }
 
-/* =========================================================
- 8) METRICS
-========================================================= */
-.plain-metrics{ margin: 10px 0 12px; }
+.plain-metrics{ margin:10px 0 14px; }
 .metric-row{
   display:flex;
-  flex-wrap: wrap;
+  flex-wrap:wrap;
   gap:10px;
-  align-items: baseline;
-  margin: 6px 0;
+  align-items:baseline;
+  margin:6px 0;
 }
-.metric-label, .metric-value{ font-weight: 900; }
-.metric-note{ color: var(--muted); font-size: 0.92em; }
+.metric-label,
+.metric-value{
+  font-weight:800;
+  color:#222;
+}
+.metric-note{
+  font-size:0.92em;
+  font-weight:400;
+  color:var(--muted);
+}
 
-/* =========================================================
- 9) BILL UI
-========================================================= */
+/* Bill UI */
 .bill-section{
-  border: 1px dashed rgba(0,0,0,0.18);
-  padding: 12px;
-  border-radius: 10px;
+  border:1px dashed rgba(0,0,0,0.18);
+  padding:12px;
+  border-radius:var(--radius-sm);
   background:#fff;
 }
-
 .bill-section-head{
   display:flex;
   align-items:center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
 }
+.add-bill-btn{
+  padding:9px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:900;
+  font-family:"Times New Roman", Times, serif;
+  background:rgba(0,0,0,0.85);
+  color:#fff;
+}
+.add-bill-btn:hover{ background:rgba(0,0,0,0.92); }
 
 .bill-row{
   display:grid;
@@ -211,91 +214,107 @@ input[readonly]{
     minmax(120px, 0.9fr)
     minmax(95px, 0.75fr)
     minmax(120px, 0.9fr)
-    58px;
-  gap: 8px;
-  align-items: end;
-  margin-top: 10px;
+    42px;
+  gap:8px;
+  align-items:end;
+  margin-top:10px;
+}
+.bill-row input,
+.bill-row select{ width:100%; }
+
+.remove-bill-btn{
+  height:42px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:900;
+  background:rgba(0,0,0,0.16);
+  color:#111;
+}
+.remove-bill-btn:hover{ background:rgba(0,0,0,0.24); }
+
+.machine-select.auto-locked{
+  pointer-events:none;
+  background:rgba(0,0,0,0.04);
+  color:rgba(0,0,0,0.55);
 }
 
-@media (max-width: 980px){
-  .bill-row{ grid-template-columns: 1fr 1fr; }
-  .bill-row .bill-label{ grid-column: 1 / -1; }
-  .bill-row .remove-bill-btn{ grid-column: 2; justify-self: end; }
-}
-
-/* =========================================================
- 10) SUMMARY BOXES
-========================================================= */
+/* Summary */
 .calculation-result{
-  background: rgba(0,0,0,0.03);
-  border: 1px solid rgba(0,0,0,0.08);
-  padding: 12px;
-  border-radius: 10px;
-  margin: 10px 0 14px;
+  background:rgba(0,0,0,0.03);
+  border:1px solid rgba(0,0,0,0.08);
+  padding:12px;
+  border-radius:var(--radius-sm);
+  margin:10px 0 14px;
 }
-
 .summary-item{
   display:flex;
-  justify-content: space-between;
+  justify-content:space-between;
   align-items:center;
-  gap: 12px;
+  gap:12px;
 }
-
 .summary-item label{
   margin:0;
-  font-size: 1.08em;
-  font-weight: 900;
+  font-size:1.1em;
+  font-weight:900;
 }
-
 .summary-item p{
   margin:0;
-  font-size: 1.15em;
-  font-weight: 900;
-}
-
-/* =========================================================
- 11) BUTTONS
-========================================================= */
-button{
-  font-family:"Times New Roman", Times, serif;
-}
-
-#addCardBtn, .submit-btn, .add-bill-btn{
-  border:none;
-  border-radius: 10px;
-  cursor:pointer;
-  font-weight: 900;
-}
-
-#addCardBtn, .submit-btn{
-  width:100%;
-  padding: 14px;
-  background: var(--btn);
-  color:#fff;
-}
-
-#addCardBtn:hover, .submit-btn:hover{
-  background: var(--btnHover);
-}
-
-.add-bill-btn{
-  padding: 9px 12px;
-  background: var(--btn);
-  color:#fff;
-}
-
-.add-bill-btn:hover{ background: var(--btnHover); }
-
-.remove-card-btn, .remove-bill-btn{
-  border:none;
-  border-radius: 10px;
-  padding: 7px 10px;
-  cursor:pointer;
-  font-weight: 900;
-  background: rgba(0,0,0,0.16);
+  font-size:1.15em;
+  font-weight:900;
   color:#111;
 }
 
-.remove-card-btn:hover, .remove-bill-btn:hover{
-  background: rgba(0,0,0,0.24);
+/* Buttons */
+#addCardBtn,
+.submit-btn{
+  display:block;
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:900;
+  font-family:"Times New Roman", Times, serif;
+  background:rgba(0,0,0,0.85);
+  color:#fff;
+}
+#addCardBtn{ margin:10px 0 18px; }
+#addCardBtn:hover,
+.submit-btn:hover{ background:rgba(0,0,0,0.92); }
+
+.remove-card-btn{
+  border:none;
+  border-radius:10px;
+  padding:8px 12px;
+  cursor:pointer;
+  font-weight:900;
+  font-family:"Times New Roman", Times, serif;
+  background:rgba(0,0,0,0.16);
+  color:#111;
+  white-space:nowrap;
+}
+.remove-card-btn:hover{ background:rgba(0,0,0,0.24); }
+
+@media (max-width:980px){
+  #mainForm{ padding:20px; }
+  .bill-row{ grid-template-columns:1fr 1fr; }
+  .bill-row .bill-label{ grid-column:1 / -1; }
+  .bill-row .remove-bill-btn{ grid-column:2; justify-self:end; }
+}
+
+@media (max-width:720px){
+  .form-group.half-width{
+    width:100%;
+    float:none;
+    padding:0 !important;
+  }
+  .form-row .form-group.half-width{
+    width:100%;
+    min-width:unset;
+  }
+  .section-head{
+    flex-direction:column;
+    align-items:stretch;
+  }
 }
