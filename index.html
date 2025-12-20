@@ -11,119 +11,95 @@
   <form id="mainForm">
     <h1 class="main-title">BÁO ĐƠN</h1>
 
-    <!-- =========================================================
-      1) THÔNG TIN ĐƠN
-    ========================================================== -->
     <section class="form-section">
       <h2>1. Thông tin Đơn</h2>
 
-      <div class="grid grid-2">
-        <div class="form-group">
-          <label for="office">Văn phòng:</label>
-          <select id="office" name="office" required>
-            <option value="">-- Chọn Văn phòng --</option>
-            <option value="ThaiHa">Thái Hà</option>
-            <option value="NguyenXien">Nguyễn Xiển</option>
-          </select>
-        </div>
+      <div class="form-group half-width">
+        <label for="office">Văn phòng:</label>
+        <select id="office" name="office" required>
+          <option value="">-- Chọn Văn phòng --</option>
+          <option value="ThaiHa">Thái Hà</option>
+          <option value="NguyenXien">Nguyễn Xiển</option>
+        </select>
+      </div>
 
-        <div class="form-group">
-          <label for="date">Ngày làm đơn:</label>
-          <input type="date" id="date" name="date" value="" required />
-        </div>
+      <div class="form-group half-width">
+        <label for="date">Ngày làm đơn:</label>
+        <input type="date" id="date" name="date" value="" required />
+      </div>
 
-        <div class="form-group">
-          <label for="staff">Nhân viên:</label>
-          <select id="staff" name="staff" required disabled>
-            <option value="">-- Vui lòng chọn Văn phòng trước --</option>
-          </select>
-        </div>
+      <div class="form-group half-width">
+        <label for="staff">Nhân viên:</label>
+        <select id="staff" name="staff" required disabled>
+          <option value="">-- Vui lòng chọn Văn phòng trước --</option>
+        </select>
+      </div>
 
-        <div class="form-group">
-          <label for="staffShip">Nhân viên SHIP:</label>
-          <select id="staffShip" name="staffShip" required>
-            <option value="Không">Không</option>
-          </select>
-        </div>
+      <div class="form-group half-width">
+        <label for="staffShip">Nhân viên SHIP:</label>
+        <select id="staffShip" name="staffShip" required>
+          <option value="Không">Không</option>
+        </select>
       </div>
 
       <div id="customerDetailField" class="form-group hidden">
         <label for="customerDetail">Liên hệ:</label>
-        <input
-          type="text"
-          id="customerDetail"
-          name="customerDetail"
-          placeholder="Nhập tên/SĐT liên hệ"
-        />
+        <input type="text" id="customerDetail" name="customerDetail" placeholder="Nhập tên/SĐT liên hệ" />
       </div>
     </section>
 
-    <!-- =========================================================
-      2) THÔNG TIN THẺ (NHIỀU THẺ)
-    ========================================================== -->
     <div id="cardContainer">
       <section class="form-section card-item" data-card-id="1">
-        <div class="card-header">
-          <h2 class="card-title">2. Thông tin Thẻ #1</h2>
-          <button type="button" class="remove-card-btn" data-card-id="1" aria-label="Xóa thẻ">Xóa Thẻ</button>
-        </div>
+        <h2>2. Thông tin Thẻ #1</h2>
+
+        <button type="button" class="remove-card-btn" data-card-id="1">Xóa Thẻ</button>
 
         <div class="form-group">
           <label for="cardName_1">Họ và tên chủ thẻ:</label>
           <input type="text" id="cardName_1" name="cardName_1" required />
         </div>
 
-        <div class="grid grid-2">
-          <div class="form-group">
-            <label for="cardNumber_1">4 số đuôi thẻ:</label>
-            <input
-              type="text"
-              id="cardNumber_1"
-              name="cardNumber_1"
-              maxlength="4"
-              inputmode="numeric"
-              pattern="\d{4}"
-              placeholder="VD: 1234"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="cardType_1">Loại thẻ:</label>
-            <select id="cardType_1" name="cardType_1" required>
-              <option value="V">Visa</option>
-              <option value="M">MasterCard</option>
-              <option value="J">JCB</option>
-              <option value="n">Napas</option>
-            </select>
-          </div>
+        <div class="form-group half-width">
+          <label for="cardNumber_1">4 số đuôi thẻ:</label>
+          <input
+            type="text"
+            id="cardNumber_1"
+            name="cardNumber_1"
+            maxlength="4"
+            inputmode="numeric"
+            pattern="\d{4}"
+            required
+          />
         </div>
 
-        <div class="grid grid-2">
-          <div class="form-group">
+        <div class="form-group half-width">
+          <label for="cardType_1">Loại thẻ:</label>
+          <select id="cardType_1" name="cardType_1" required>
+            <option value="V">Visa</option>
+            <option value="M">MasterCard</option>
+            <option value="J">JCB</option>
+            <option value="n">Napas</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
             <label for="cardBank_1">Ngân hàng thẻ:</label>
             <input type="text" id="cardBank_1" name="cardBank_1" required />
           </div>
 
-          <div class="form-group">
+          <div class="form-group half-width">
             <label for="serviceType_1">Dịch vụ làm:</label>
-            <!-- ✅ BẮT BUỘC: mỗi thẻ phải chọn dịch vụ -->
-            <select
-              id="serviceType_1"
-              name="serviceType_1"
-              class="service-selector card-input"
-              required
-            >
+            <select id="serviceType_1" name="serviceType_1" class="service-selector card-input" required>
               <option value="">-- Chọn Dịch vụ --</option>
               <option value="DAO">ĐÁO</option>
               <option value="RUT">RÚT</option>
               <option value="DAO_RUT">ĐÁO+RÚT</option>
             </select>
-            <small class="hint">*Mỗi thẻ bắt buộc chọn dịch vụ.</small>
           </div>
         </div>
 
-        <!-- ✅ fieldset + disabled: các required bên trong không chặn submit khi chưa chọn dịch vụ -->
+        <!-- ✅ fieldset + disabled: required bên trong không chặn submit khi chưa chọn dịch vụ -->
         <fieldset class="service-details-container hidden" id="serviceDetails_1" disabled>
           <div class="form-group">
             <label for="transferAmount_1">Tiền chuyển:</label>
@@ -131,27 +107,16 @@
               type="text"
               id="transferAmount_1"
               name="transferAmount_1"
-              value=""
+              value="0"
               class="card-input currency-input"
               inputmode="numeric"
               placeholder="0"
             />
-            <small class="hint">
-              Với <b>RÚT</b>: tiền chuyển tự tính, bạn không cần nhập.
-            </small>
           </div>
 
           <div class="plain-metrics">
             <div class="metric-row">
-              <span class="metric-label">Tổng tiền làm thẻ:</span>
-              <span class="metric-value"><span id="totalBillAmount_1">0</span> VNĐ</span>
-            </div>
-
-            <div class="metric-row">
-              <span class="metric-label">Phí âm / Back khách:</span>
-              <span class="metric-value"><span id="differenceAmount_1">0</span> VNĐ</span>
-              <span class="metric-note">(Tổng bill - Tiền chuyển)</span>
-            </div>
+              <span.req: chèn bằng JS khi cần (DAO/DAO_RUT), RÚT thì không có luôn -->
           </div>
 
           <div class="bill-section">
@@ -189,121 +154,109 @@
                 <input type="text" class="bill-batch card-input integer-only" name="billBatch_1_1" placeholder="Số lô" />
                 <input type="text" class="bill-invoice card-input integer-only" name="billInvoice_1_1" placeholder="Số hóa đơn" />
 
-                <button type="button" class="remove-bill-btn" title="Xóa bill">Xóa</button>
+                <button type="button" class="remove-bill-btn" title="Xóa bill">Xóa BILL</button>
               </div>
             </div>
           </div>
         </fieldset>
+
+        <hr />
       </section>
     </div>
 
     <button type="button" id="addCardBtn">➕ Thêm Thẻ Mới</button>
 
-    <!-- =========================================================
-      3) TÍNH PHÍ
-    ========================================================== -->
     <section class="form-section final-summary">
       <h2>3. Tính phí</h2>
-      <p class="hint" id="serviceModeHint"></p>
 
       <div class="calculation-result summary-item">
         <label>Tổng tiền làm (tổng bill toàn bộ thẻ):</label>
         <p id="totalBillAll">0 VNĐ</p>
       </div>
 
-      <div class="grid grid-2">
-        <div class="form-group">
-          <label for="feePercentAll">Phí thu khách (% trên tổng bill):</label>
-          <!-- ✅ type=text: cho phép 1,2 / 1.2 và cả chữ (chữ => dùng phí cứng) -->
-          <input
-            type="text"
-            id="feePercentAll"
-            name="feePercentAll"
-            value=""
-            class="card-input"
-            inputmode="decimal"
-            placeholder="VD: 1.2 hoặc 1,2. Nhập chữ => dùng phí cứng"
-          />
-          <small class="hint">
-            Nếu nhập chữ (không phải số), hệ thống sẽ yêu cầu <b>Phí cứng</b>.
-          </small>
-        </div>
+      <div class="form-group">
+        <label for="feePercentAll">Phí thu khách (% trên tổng tiền làm):</label>
+        <input
+          type="text"
+          id="feePercentAll"
+          name="feePercentAll"
+          value=""
+          class="card-input"
+          inputmode="decimal"
+          placeholder="Nhập % (vd 1.2 hoặc 1,2). Nhập chữ để dùng phí cứng"
+        />
+      </div>
 
-        <div class="form-group hidden" id="feeFixedGroup">
-          <label for="feeFixedAll">Phí cứng thu khách (VNĐ):</label>
-          <input
-            type="text"
-            id="feeFixedAll"
-            name="feeFixedAll"
-            value=""
-            class="card-input currency-input"
-            inputmode="numeric"
-            placeholder="Tự nhảy từ % (nếu % hợp lệ) hoặc nhập tay"
-          />
-        </div>
+      <div class="form-group hidden" id="feeFixedGroup">
+        <label for="feeFixedAll">Phí cứng thu khách (VNĐ):</label>
+        <input
+          type="text"
+          id="feeFixedAll"
+          name="feeFixedAll"
+          value=""
+          class="card-input currency-input"
+          inputmode="numeric"
+          placeholder="Tự nhảy từ % (hoặc nhập tay nếu % không hợp lệ)"
+        />
+      </div>
 
-        <div class="form-group">
-          <label for="shipFee">Phí ship:</label>
-          <input
-            type="text"
-            id="shipFee"
-            name="shipFee"
-            value=""
-            class="card-input currency-input"
-            inputmode="numeric"
-            placeholder="Nhập phí ship"
-          />
-        </div>
+      <div class="form-group">
+        <label for="shipFee">Phí ship:</label>
+        <input
+          type="text"
+          id="shipFee"
+          name="shipFee"
+          value=""
+          class="card-input currency-input"
+          inputmode="numeric"
+          placeholder="nhập phí ship"
+        />
+      </div>
 
-        <div class="form-group">
-          <label for="negativeCardFee">Thẻ âm:</label>
-          <input
-            type="text"
-            id="negativeCardFee"
-            name="negativeCardFee"
-            value="0"
-            class="card-input currency-input"
-            inputmode="numeric"
-            readonly
-            tabindex="-1"
-          />
-          <small class="hint">Tự tính theo toàn đơn. (Đơn thuần RÚT: luôn = 0)</small>
-        </div>
+      <div class="form-group">
+        <label for="negativeCardFee">Thẻ âm:</label>
+        <input
+          type="text"
+          id="negativeCardFee"
+          name="negativeCardFee"
+          value="0"
+          class="card-input currency-input"
+          inputmode="numeric"
+          placeholder="0"
+        />
+      </div>
 
-        <div class="form-group">
-          <label for="actualFeeReceived">Phí thực thu:</label>
-          <input
-            type="text"
-            id="actualFeeReceived"
-            name="actualFeeReceived"
-            value=""
-            class="card-input currency-input"
-            inputmode="numeric"
-            placeholder="Nhập phí thực thu (đã thu)"
-          />
-          <small class="hint">Bỏ trống nếu chưa thu. Có thể lớn hơn phí (đổi tiền).</small>
-        </div>
-
-        <div class="form-group">
-          <label for="returnFeePercentAll">Phí chuyển về (%):</label>
-          <input
-            type="number"
-            id="returnFeePercentAll"
-            name="returnFeePercentAll"
-            min="0"
-            step="0.01"
-            value=""
-            class="card-input"
-            readonly
-            tabindex="-1"
-          />
-          <small class="hint">Tự động theo nhân viên / khách VP (chỉ để tham khảo/ghi nhận).</small>
-        </div>
+      <div class="form-group">
+        <label for="returnFeePercentAll">Phí chuyển về (%):</label>
+        <input
+          type="number"
+          id="returnFeePercentAll"
+          name="returnFeePercentAll"
+          min="0"
+          step="0.01"
+          value=""
+          class="card-input"
+          readonly
+        />
       </div>
 
       <div class="calculation-result summary-item">
         <label>Tổng thu khách:</label>
         <p id="totalFeeCollectedAll">0 VNĐ</p>
+      </div>
+
+      <div class="form-group">
+        <label for="actualFeeReceived">Phí thực thu:</label>
+        <input
+          type="text"
+          id="actualFeeReceived"
+          name="actualFeeReceived"
+          value=""
+          class="card-input currency-input"
+          inputmode="numeric"
+          placeholder="Nhập phí thực thu (đã thu)"
+        />
+        <small style="display:block;color:#666;margin-top:6px;">Bỏ trống nếu chưa thu.</small>
       </div>
 
       <div class="calculation-result summary-item">
