@@ -7,10 +7,8 @@ const MAX_BILLS_PER_CARD = 10;
 /* =========================================================
    GOOGLE SHEET WEB APP (CẬP NHẬT 2 DÒNG NÀY)
 ========================================================= */
-const GOOGLE_SHEET_WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbyeJqGboIntGGg4l28EyzRl4zHdQkftp6lbns14czS83Z24Ym5uC8iUztaGnE2LfOtS/exec";
-const GOOGLE_SHEET_SECRET = "1"; // trùng SECRET trong Apps Script
-
+const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw9bI7NcNmLyMmCXVr2-tM2gKCZyb_dIscmSqnb_VkrZpfg3G1LrHLWn_Wz6FyOgElj/exec";
+const GOOGLE_SHEET_SECRET = "THỬ"; // trùng lặp trong Apps Script
 /* =========================================================
    SUBMIT GUARD (CHẶN GỬI NHIỀU LẦN)
 ========================================================= */
@@ -383,6 +381,7 @@ function updateReturnFeePercentAuto() {
     returnEl.value = "1.45";
   }
 }
+
 /* =========================================================
    (3) TÍNH TOÁN THEO DỊCH VỤ
 ========================================================= */
@@ -430,7 +429,7 @@ function lockTransferInput(transferEl, lock) {
   }
 }
 
-// Rule (2): RÚT => auto Tiền chuyển = Tiền làm - Tiền phí
+// Rule (2): RÚT => auto Tiền chuyển = Tiền làm - Tiền phí + Tiền phí thực thu
 function syncTransferForWithdraw(cardId, totalBill, feeShare, actualShare) {
   const serviceRaw = document.getElementById(`serviceType_${cardId}`)?.value || "";
   const service = normalizeServiceValue(serviceRaw);
@@ -452,6 +451,12 @@ function syncTransferForWithdraw(cardId, totalBill, feeShare, actualShare) {
 
 function getCardTotals(cardId, ctx) {
   const totalBill = getCardBillTotal(cardId);
+   const { feePercent, returnFeePercent } = getFeePercents();
+   const feeBase = Math.round((totalBill * feePercent) / 100);
+   onst returnFee = Math.round((totalBill * returnFeePercent) / 100);
+   // sync transfer nếu là RÚT
+   syncTransferForWithdraw(cardId, totalBill, feeShare, actualShare);
+   const transfer = parseCurrencyVND(document.getElementById(`transferAmount_${cardId}`)?.value);
 
   const serviceRaw = document.getElementById(`serviceType_${cardId}`)?.value || "";
   const service = normalizeServiceValue(serviceRaw);
@@ -461,12 +466,6 @@ function getCardTotals(cardId, ctx) {
 
   const feeShare = ctx?.feeShareMap?.get(cardId) || 0;
   const actualShare = ctx?.actualShareMap?.get(cardId) || 0;
-
-  // sync transfer nếu là RÚT
-  syncTransferForWithdraw(cardId, totalBill, feeShare, actualShare);
-
-  const transfer = parseCurrencyVND(document.getElementById(`transferAmount_${cardId}`)?.value);
-
   // feeForCard:
   // - DAO: feeShare
   // - RUT: feeShare
@@ -533,7 +532,7 @@ function recalcSummary() {
   const ctx = { feeShareMap, actualShareMap };
 
   let totalTransferAll = 0;
-  let totalFeeAll = 0;
+  let totalFeeAll = 0;// tổng phí theo từng thẻ 
   let totalFeeFixedAll = 0;
 
   const servicesSet = new Set();
