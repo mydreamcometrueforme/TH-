@@ -61,7 +61,16 @@
 
     <div class="form-group half-width">
       <label for="cardNumber_1">4 số đuôi thẻ:</label>
-      <input type="text" id="cardNumber_1" name="cardNumber_1" maxlength="4" required />
+      <input
+  type="text"
+  id="cardNumber_1"
+  name="cardNumber_1"
+  maxlength="4"
+  inputmode="numeric"
+  pattern="\d{4}"
+  required
+/>
+
     </div>
 
     <div class="form-group half-width">
@@ -175,7 +184,7 @@
       </div>
 
       <div class="form-group">
-        <div class="form-group">
+       <div class="form-group">
   <label for="feePercentAll">Phí thu khách (% trên tổng tiền làm):</label>
   <input
     type="number"
@@ -198,11 +207,9 @@
     value=""
     class="card-input currency-input"
     inputmode="numeric"
-    placeholder="PHÍ CỨNG (VNĐ)"
+    placeholder="Tự nhảy từ % (có thể sửa tay)"
   />
 </div>
-
-      </div>
 
       <div class="form-group">
         <label for="shipFee">Phí ship:</label>
@@ -210,10 +217,10 @@
           type="text"
           id="shipFee"
           name="shipFee"
-          value="0"
+          value=""
           class="card-input currency-input"
           inputmode="numeric"
-          placeholder="0"
+          placeholder="nhập phí ship"
         />
       </div>
       
@@ -232,15 +239,16 @@
 
       <div class="form-group">
         <label for="returnFeePercentAll">Phí chuyển về (%):</label>
-        <input
-          type="number"
-          id="returnFeePercentAll"
-          name="returnFeePercentAll"
-          min="0"
-          step="0.01"
-          value="0"
-          class="card-input"
-        />
+       <input
+  type="number"
+  id="returnFeePercentAll"
+  name="returnFeePercentAll"
+  min="0"
+  step="0.01"
+  value=""
+  class="card-input"
+  readonly
+/>
       </div>
       
       <div class="calculation-result summary-item">
