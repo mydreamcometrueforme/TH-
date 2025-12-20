@@ -397,3 +397,11 @@ input[readonly] {
     min-width: unset;
   }
 }
+#feeFixedGroup.hidden {
+  display: none;
+}
+
+input[readonly] {
+  opacity: 0.85;
+}
+
