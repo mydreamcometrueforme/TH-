@@ -1,19 +1,13 @@
-/* =========================================================
-   LIMITS
-========================================================= */
+/*    LIMITS */
 const MAX_CARDS_PER_ORDER = 10;
 const MAX_BILLS_PER_CARD = 10;
 
-/* =========================================================
-   GOOGLE SHEET WEB APP
-========================================================= */
+/*   GOOGLE SHEET WEB APP */
 const GOOGLE_SHEET_WEBAPP_URL =
   "https://script.google.com/macros/s/AKfycbyeJqGboIntGGg4l28EyzRl4zHdQkftp6lbns14czS83Z24Ym5uC8iUztaGnE2LfOtS/exec";
-const GOOGLE_SHEET_SECRET = "THỬ"; // ⚠️ phải trùng SECRET trong Apps Script
+const GOOGLE_SHEET_SECRET = "THỬ"; // phải trùng SECRET trong Apps Script
 
-/* =========================================================
-   SUBMIT GUARD (CHẶN GỬI NHIỀU LẦN)
-========================================================= */
+/*    SUBMIT GUARD (CHẶN GỬI NHIỀU LẦN) */
 let IS_SUBMITTING = false;
 
 function makeSubmissionId() {
@@ -23,12 +17,10 @@ function makeSubmissionId() {
 // ✅ 1 đơn / 1 ID cố định (reload trang sẽ có ID mới)
 const CURRENT_SUBMISSION_ID = makeSubmissionId();
 
-/* =========================================================
-   DATA
-========================================================= */
+/*    DATA */
 const STAFF_BY_OFFICE = {
-  ThaiHa: ["Cường", "Thái", "Thịnh", "Linh", "Trang", "Vượng", "Hoàng anh", "Huy"],
-  NguyenXien: ["An", "Kiên", "Trang anh", "Phú", "Trung", "Nam", "Hiệp", "Dương", "Đức anh", "Vinh"],
+  ThaiHa: ["Cường", "Thái", "Thịnh", "Linh", "Trang", "Vượng", "Hoàng Anh", "Huy"],
+  NguyenXien: ["An", "Kiên", "Trang Anh", "Phú", "Trung", "Nam", "Hiệp", "Dương", "Đức Anh", "Vinh"],
 };
 const ALL_STAFF = [...STAFF_BY_OFFICE.ThaiHa, ...STAFF_BY_OFFICE.NguyenXien];
 
@@ -62,9 +54,7 @@ const POS_DATA = {
   },
 };
 
-/* =========================================================
-   HELPERS
-========================================================= */
+/*  HELPERS */
 function parseCurrencyVND(str) {
   const digits = String(str ?? "").replace(/[^\d]/g, "");
   return digits ? Math.round(Number(digits)) : 0;
@@ -144,9 +134,7 @@ function digitsOnly(str) {
   return String(str || "").replace(/[^\d]/g, "");
 }
 
-/* =========================================================
-   UI LIMIT STATES
-========================================================= */
+/*    UI LIMIT STATES */
 function updateCardLimitUI() {
   const btn = document.getElementById("addCardBtn");
   if (!btn) return;
@@ -163,9 +151,7 @@ function updateBillLimitUI(cardId) {
   btn.title = btn.disabled ? `Tối đa ${MAX_BILLS_PER_CARD} bill/thẻ` : "";
 }
 
-/* =========================================================
-   (1) OFFICE -> STAFF
-========================================================= */
+/*    (1) OFFICE -> STAFF */
 function setupOfficeStaffLogic() {
   const form = document.getElementById("mainForm");
 
@@ -257,9 +243,7 @@ function setupOfficeStaffLogic() {
   syncStaffFinal();
 }
 
-/* =========================================================
-   (2) POS -> HKD -> MÁY (Bill row)
-========================================================= */
+/*   (2) POS -> HKD -> MÁY (Bill row) */
 function initBillRow(rowEl) {
   const posSel = rowEl.querySelector(".pos-select");
   const hkdSel = rowEl.querySelector(".hkd-select");
@@ -704,8 +688,13 @@ function billRowMarkup(cardId, billIndex) {
         <option value="">-- Chọn Máy POS --</option>
       </select>
 
-      <input type="text" class="bill-batch card-input" name="billBatch_${cardId}_${billIndex}" placeholder="Số lô" />
-      <input type="text" class="bill-invoice card-input" name="billInvoice_${cardId}_${billIndex}" placeholder="Số hóa đơn" />
+     <input type="text" class="bill-batch card-input integer-only"
+       name="billBatch_${cardId}_${billIndex}" placeholder="Số lô"
+       inputmode="numeric" pattern="\\d*" />
+
+<input type="text" class="bill-invoice card-input integer-only"
+       name="billInvoice_${cardId}_${billIndex}" placeholder="Số hóa đơn"
+       inputmode="numeric" pattern="\\d*" />
 
       <button type="button" class="remove-bill-btn" title="Xóa bill">Xóa BILL</button>
     </div>
