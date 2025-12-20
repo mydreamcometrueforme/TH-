@@ -609,30 +609,26 @@ function markFeeFixedManual() {
 }
 
 /**
- * Đồng bộ phí cứng từ %:
- * - % hợp lệ: show phí cứng và auto tính nếu chưa manual
- * - % không hợp lệ (nhập chữ): show phí cứng, bắt nhập tay, KHÔNG auto
- * - % rỗng: ẩn phí cứng nếu phí cứng cũng rỗng
+ * Đồng bộ hiển thị phí cứng:
+ * - % hợp lệ: ẨN phí cứng (không dùng, không auto)
+ * - % không hợp lệ (nhập chữ/ký tự lạ): HIỆN phí cứng + BẮT BUỘC nhập tay, KHÔNG auto
+ * - % rỗng: ẨN phí cứng
  */
 function syncFeeFixedFromPercent(totalBillAll) {
+  // totalBillAll giữ lại cho signature đồng nhất (không dùng nữa vì không auto)
   const percentInfo = parsePercentVN($("#feePercentAll")?.value || "");
   const fixedEl = $("#feeFixedAll");
-  const fixedVal = getFeeFixedInput();
+  if (!fixedEl) return percentInfo;
 
-  const shouldShow = (!percentInfo.isEmpty) || fixedVal > 0;
-  showFeeFixedGroup(shouldShow);
+  // ✅ chỉ show khi % có nhập nhưng KHÔNG hợp lệ
+  const shouldShowFixed = !percentInfo.isEmpty && !percentInfo.valid;
+  showFeeFixedGroup(shouldShowFixed);
 
-  if (fixedEl) {
-    fixedEl.required = (!percentInfo.isEmpty && !percentInfo.valid);
-  }
+  // ✅ bắt buộc nhập phí cứng nếu % không hợp lệ
+  fixedEl.required = shouldShowFixed;
 
-  if (percentInfo.valid && fixedEl) {
-    const isManual = fixedEl.dataset.manual === "1";
-    if (!isManual) {
-      const calc = Math.round((totalBillAll * percentInfo.value) / 100);
-      setFeeFixedInput(calc);
-    }
-  }
+  // ✅ tuyệt đối KHÔNG auto set phí cứng từ %
+  // (bỏ toàn bộ đoạn setFeeFixedInput(calc) cũ)
 
   return percentInfo;
 }
