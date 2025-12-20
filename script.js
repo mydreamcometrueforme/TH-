@@ -5,7 +5,7 @@ const MAX_CARDS_PER_ORDER = 10;
 const MAX_BILLS_PER_CARD = 10;
 
 const GOOGLE_SHEET_WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycby9GJ3Sk__YX5eE03f2oYd2DazE2ASrEgfrKvzCYbRnOcxFXh7o2Zbfpx8wo5YmXimA/exec";
+  "https://script.google.com/macros/s/AKfycbwv81WLcBso7hSH_a-Yfz7WFQX1KNLJp0RN-HyHfGTYJ14qFz2fAiyDBVjK-CzZWaNG/exec";
 const GOOGLE_SHEET_SECRET = "THỬ";
 
 let IS_SUBMITTING = false;
