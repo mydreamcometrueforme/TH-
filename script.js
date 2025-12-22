@@ -8,12 +8,15 @@ const GOOGLE_SHEET_WEBAPP_URL =
   "https://script.google.com/macros/s/AKfycbwv81WLcBso7hSH_a-Yfz7WFQX1KNLJp0RN-HyHfGTYJ14qFz2fAiyDBVjK-CzZWaNG/exec";
 const GOOGLE_SHEET_SECRET = "THỬ";
 
+// chặn double submit
 let IS_SUBMITTING = false;
+
+// submissionId để Apps Script dedupe
 function makeSubmissionId() {
   if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
   return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
-const CURRENT_SUBMISSION_ID = makeSubmissionId();
+let CURRENT_SUBMISSION_ID = makeSubmissionId(); // ✅ dùng let để reset xong tạo id mới
 
 /* =========================================================
  2) DATA (STAFF / POS)
@@ -24,6 +27,7 @@ const STAFF_BY_OFFICE = {
 };
 const ALL_STAFF = [...STAFF_BY_OFFICE.ThaiHa, ...STAFF_BY_OFFICE.NguyenXien];
 
+// POS -> HKD -> Máy
 const POS_DATA = {
   BV: {
     "THU TRANG 92A": ["1077", "8244", "1076", "8243"],
@@ -62,6 +66,11 @@ function formatVND(n) {
   return Number(n || 0).toLocaleString("vi-VN");
 }
 
+/**
+ * Format currency input theo VND:
+ * - allowEmpty=true: xóa sạch => giữ rỗng
+ * - allowEmpty=false: xóa sạch => về "0"
+ */
 function formatCurrencyInput(el, allowEmpty = false) {
   const rawText = String(el.value ?? "");
   const onlyDigits = rawText.replace(/[^\d]/g, "");
@@ -71,6 +80,7 @@ function formatCurrencyInput(el, allowEmpty = false) {
     return;
   }
 
+  // giữ caret tương đối theo số lượng digit phía trước
   const start = el.selectionStart ?? rawText.length;
   const before = rawText.slice(0, start);
   const digitsBefore = before.replace(/[^\d]/g, "").length;
@@ -78,7 +88,8 @@ function formatCurrencyInput(el, allowEmpty = false) {
   const raw = parseCurrencyVND(rawText);
   el.value = raw > 0 ? formatVND(raw) : "0";
 
-  let pos = 0, seen = 0;
+  let pos = 0,
+    seen = 0;
   while (pos < el.value.length && seen < digitsBefore) {
     if (/\d/.test(el.value[pos])) seen++;
     pos++;
@@ -106,9 +117,7 @@ function parsePercentVN(raw) {
 }
 
 /**
- * Chia 1 khoản tiền theo tỉ lệ bill:
- * - total: số tiền cần chia
- * - items: [{cardId, totalBill, ...}]
+ * Chia tiền theo tỉ lệ bill, đảm bảo tổng share = total
  */
 function allocateByBill(total, items, getWeight) {
   const list = items.filter((x) => getWeight(x) > 0);
@@ -142,7 +151,7 @@ function setupOfficeStaffLogic() {
   const contactField = $("#customerDetailField");
   const contactInput = $("#customerDetail");
 
-  // hidden staffFinal
+  // hidden staffFinal (đẩy lên Sheet)
   let staffFinalEl = $("#staffFinal");
   if (!staffFinalEl) {
     staffFinalEl = document.createElement("input");
@@ -152,6 +161,7 @@ function setupOfficeStaffLogic() {
     form?.appendChild(staffFinalEl);
   }
 
+  // staff ship: all staff + Không
   shipEl.innerHTML = [
     `<option value="Không">Không</option>`,
     ...ALL_STAFF.map((n) => `<option value="${n}">${n}</option>`),
@@ -176,8 +186,7 @@ function setupOfficeStaffLogic() {
   }
   function syncStaffFinal() {
     const staffVal = staffEl?.value || "";
-    staffFinalEl.value =
-      staffVal === "Khách văn phòng" ? (contactInput?.value || "").trim() : staffVal;
+    staffFinalEl.value = staffVal === "Khách văn phòng" ? (contactInput?.value || "").trim() : staffVal;
   }
 
   officeEl?.addEventListener("change", () => {
@@ -295,6 +304,7 @@ function onHKDChange(rowEl) {
   const hkd = hkdSel.value;
   const machines = pos && hkd && POS_DATA[pos] && POS_DATA[pos][hkd] ? POS_DATA[pos][hkd] : [];
 
+  // BV: cho chọn máy
   if (pos === "BV") {
     setSelectOptions(machineSel, machines, "-- Chọn Máy POS --");
     machineSel.classList.remove("auto-locked");
@@ -302,6 +312,7 @@ function onHKDChange(rowEl) {
     return;
   }
 
+  // POS khác: auto lock theo máy đầu tiên
   if (machines.length > 0) {
     setSelectOptions(machineSel, machines, "-- Máy POS --");
     machineSel.value = String(machines[0]);
@@ -400,9 +411,17 @@ function renumberBills(cardId) {
 /* =========================================================
  6) CARD: ADD/REMOVE + SERVICE TOGGLE
 ========================================================= */
-function getCardEls() { return $$(".card-item"); }
-function getAllCardIds() { return getCardEls().map((s) => String(s.dataset.cardId || "")).filter(Boolean); }
-function getCardCount() { return getCardEls().length; }
+function getCardEls() {
+  return $$(".card-item");
+}
+function getAllCardIds() {
+  return getCardEls()
+    .map((s) => String(s.dataset.cardId || ""))
+    .filter(Boolean);
+}
+function getCardCount() {
+  return getCardEls().length;
+}
 
 function updateCardLimitUI() {
   const btn = $("#addCardBtn");
@@ -422,6 +441,8 @@ function normalizeService(raw) {
 
 /* =========================================================
  6.1) “PHÍ ÂM / BACK KHÁCH”: CHÈN/XÓA THEO DỊCH VỤ
+   - RÚT: ẩn
+   - ĐÁO / ĐÁO+RÚT / MIX: hiện
 ========================================================= */
 function ensureDifferenceRow(cardId) {
   const exist = document.getElementById(`differenceAmount_${cardId}`);
@@ -439,6 +460,7 @@ function ensureDifferenceRow(cardId) {
     <span class="metric-note">(tiền âm thẻ âm, tiền dương thẻ dư/ rút)</span>
   `;
 
+  // chèn dưới “Tổng tiền làm thẻ”
   const firstRow = metrics.querySelector(".metric-row");
   if (firstRow && firstRow.nextSibling) metrics.insertBefore(row, firstRow.nextSibling);
   else metrics.appendChild(row);
@@ -468,21 +490,24 @@ function toggleServiceDetails(cardId, opts = { recalc: true }) {
   fs.classList.toggle("hidden", !show);
   fs.disabled = !show;
 
+  // instant insert/remove
   if (service === "RUT") removeDifferenceRow(cardId);
   if (service === "DAO" || service === "DAO_RUT") ensureDifferenceRow(cardId);
 
   if (opts.recalc) recalcAll();
 }
 
-/* reindex helpers */
+/* ===== reindex helpers (khi xóa thẻ) ===== */
 function replaceCardToken(str, oldId, newId) {
   if (!str) return str;
   str = str.replaceAll(`_${oldId}_`, `_${newId}_`);
   str = str.replace(new RegExp(`_${oldId}$`), `_${newId}`);
   return str;
 }
+
 function updateCardIdentifiers(cardEl, oldId, newId) {
   cardEl.dataset.cardId = String(newId);
+
   const h2 = cardEl.querySelector("h2");
   if (h2) h2.textContent = `2. Thông tin Thẻ #${newId}`;
 
@@ -497,32 +522,39 @@ function updateCardIdentifiers(cardEl, oldId, newId) {
 function resetCardValues(cardEl) {
   const cardId = String(cardEl.dataset.cardId);
 
+  // reset input
   $$("input", cardEl).forEach((inp) => {
     if (inp.classList.contains("bill-label")) return;
     if (inp.classList.contains("currency-input")) inp.value = "0";
     else inp.value = "";
   });
 
+  // reset service
   const serviceSel = $(".service-selector", cardEl);
   if (serviceSel) serviceSel.value = "";
 
+  // hide fieldset
   const fs = $(`#serviceDetails_${cardId}`, cardEl) || $(".service-details-container", cardEl);
   if (fs) {
     fs.classList.add("hidden");
     fs.disabled = true;
   }
 
+  // bỏ row phí âm nếu có
   removeDifferenceRow(cardId);
 
+  // reset bills -> 1 dòng
   const wrapper = $(`#billDetails_${cardId}`, cardEl);
   if (wrapper) {
     wrapper.innerHTML = billRowMarkup(cardId, 1);
     $$(".bill-row", wrapper).forEach(initBillRow);
   }
 
+  // reset UI total bill
   const t = $(`#totalBillAmount_${cardId}`, cardEl);
   if (t) t.textContent = "0";
 
+  // format currency inputs (transfer/bill allow empty)
   $$(".currency-input", cardEl).forEach((el) => {
     const allowEmpty =
       el.id === "actualFeeReceived" ||
@@ -559,16 +591,19 @@ function addNewCard() {
 function reindexCards() {
   const cards = getCardEls();
 
+  // pass 1: đổi qua TMP để tránh trùng ID
   cards.forEach((cardEl, i) => {
     const oldId = String(cardEl.dataset.cardId);
     updateCardIdentifiers(cardEl, oldId, `TMP${i + 1}`);
   });
 
+  // pass 2: TMP -> 1..n
   getCardEls().forEach((cardEl, i) => {
     const tmpId = String(cardEl.dataset.cardId);
     updateCardIdentifiers(cardEl, tmpId, String(i + 1));
   });
 
+  // init lại bill/select + toggle UI
   getAllCardIds().forEach((cardId) => {
     $$(`#billDetails_${cardId} .bill-row`).forEach(initBillRow);
     renumberBills(cardId);
@@ -593,12 +628,13 @@ function getFeeFixedInput() {
 }
 
 /**
- * ✅ Theo yêu cầu:
- * - % hợp lệ: ẨN phí cứng, KHÔNG auto
- * - % không hợp lệ: HIỆN phí cứng + bắt buộc nhập tay
+ * ✅ Rule mới theo yêu cầu:
+ * - % hợp lệ: ẨN phí cứng (không auto)
+ * - % không hợp lệ (nhập chữ/ký tự): HIỆN phí cứng + bắt buộc nhập tay
  * - % rỗng: ẨN phí cứng
  */
 function syncFeeFixedFromPercent(totalBillAll) {
+  // totalBillAll giữ signature (không dùng vì không auto)
   const percentInfo = parsePercentVN($("#feePercentAll")?.value || "");
   const fixedEl = $("#feeFixedAll");
   if (!fixedEl) return percentInfo;
@@ -614,7 +650,7 @@ function syncFeeFixedFromPercent(totalBillAll) {
 
 /**
  * ✅ Base fee tổng:
- * - % hợp lệ => tính theo % (trên totalBillAll)
+ * - % hợp lệ => tính theo %
  * - % không hợp lệ (có nhập) => dùng phí cứng user nhập
  * - % rỗng => 0
  */
@@ -631,8 +667,12 @@ function getBaseFeeTotal(totalBillAll, percentInfo) {
 /* =========================================================
  8) TÍNH TOÁN + UPDATE UI
 ========================================================= */
-function getShipFee() { return parseCurrencyVND($("#shipFee")?.value || ""); }
-function getActualFeeReceived() { return parseCurrencyVND($("#actualFeeReceived")?.value || ""); }
+function getShipFee() {
+  return parseCurrencyVND($("#shipFee")?.value || "");
+}
+function getActualFeeReceived() {
+  return parseCurrencyVND($("#actualFeeReceived")?.value || "");
+}
 
 function getCardBillTotal(cardId) {
   const wrap = $(`#billDetails_${cardId}`);
@@ -668,10 +708,22 @@ function updateCardMetricsUI(cardId, totalBill, transfer, service) {
   if (diffSpan) diffSpan.replaceChildren(document.createTextNode(formatVND(totalBill - transfer)));
 }
 
+/**
+ * recalcAll:
+ * - Tính tổng bill
+ * - Tính baseFeeTotal theo (% hợp lệ) hoặc (phí cứng nếu % invalid)
+ * - Nếu có thẻ RÚT: auto tiền chuyển = bill - feeShare + actualShare
+ * - Tính totalTransferAll
+ * - MIX dịch vụ: tính giống ĐÁO+RÚT (theo yêu cầu)
+ *
+ * ⚠️ NOTE theo logic hiện tại:
+ * - RÚT_ONLY: totalCollect = baseFeeTotal + shipFee (chưa cộng ship trước đây -> đã cộng)
+ * - totalPay = totalTransferAll
+ */
 function recalcAll() {
   const cardIds = getAllCardIds();
 
-  // 1) meta: tổng bill + list thẻ
+  // 1) meta
   let totalBillAll = 0;
   const meta = cardIds.map((cardId) => {
     const totalBill = getCardBillTotal(cardId);
@@ -684,23 +736,16 @@ function recalcAll() {
   const percentInfo = syncFeeFixedFromPercent(totalBillAll);
   const baseFeeTotal = getBaseFeeTotal(totalBillAll, percentInfo);
 
-  // 3) đọc ship & thực thu (cần cho auto transfer RÚT)
-  const shipFee = getShipFee();
-  const actualFeeReceived = getActualFeeReceived();
-
-  // 4) chia phí (base fee) theo bill cho các thẻ có service
+  // 3) chia baseFee cho thẻ có service (để RÚT auto tiền chuyển)
   const cardsWithService = meta.filter((c) => !!c.service);
   const feeShareMap = allocateByBill(baseFeeTotal, cardsWithService, (c) => c.totalBill);
 
-  // 5) chia thực thu cho các thẻ RÚT (để cộng vào auto transfer)
+  // 4) chia actualFee cho thẻ RÚT
+  const actualFeeReceived = getActualFeeReceived();
   const withdrawCards = meta.filter((c) => c.service === "RUT");
   const actualShareMap = allocateByBill(actualFeeReceived, withdrawCards, (c) => c.totalBill);
 
-  // ✅ FIX BUG: chia shipFee cho các thẻ RÚT để TRỪ vào auto transfer
-  // (vì ship là phí thu thêm => giảm số tiền trả khách)
-  const shipShareMap = allocateByBill(shipFee, withdrawCards, (c) => c.totalBill);
-
-  // 6) tính transfer per-card
+  // 5) tính transfer per-card
   let totalTransferAll = 0;
   const serviceSet = new Set();
 
@@ -711,11 +756,10 @@ function recalcAll() {
     const transferEl = $(`#transferAmount_${cardId}`);
     const feeShare = feeShareMap.get(cardId) || 0;
     const actualShare = actualShareMap.get(cardId) || 0;
-    const shipShare = shipShareMap.get(cardId) || 0;
 
-    // ✅ RÚT: auto Transfer = Bill - FeeShare - ShipShare + ActualShare
+    // RÚT: auto Transfer = Bill - FeeShare + ActualShare
     if (service === "RUT" && transferEl) {
-      const autoTransfer = Math.max(0, totalBill - feeShare - shipShare + actualShare);
+      const autoTransfer = Math.max(0, totalBill - feeShare + actualShare);
       lockTransferInput(transferEl, true);
       transferEl.value = autoTransfer > 0 ? formatVND(autoTransfer) : "0";
     } else {
@@ -728,7 +772,7 @@ function recalcAll() {
     updateCardMetricsUI(cardId, totalBill, transfer, service);
   });
 
-  // 7) xác định mode
+  // 6) mode
   const onlyService = serviceSet.size === 1 ? [...serviceSet][0] : "";
   let mode = "";
   if (serviceSet.size === 1 && onlyService === "RUT") mode = "RUT_ONLY";
@@ -736,7 +780,7 @@ function recalcAll() {
   else if (serviceSet.size === 1 && onlyService === "DAO_RUT") mode = "DAO_RUT_ONLY";
   else if (serviceSet.size >= 2) mode = "MIX";
 
-  // 8) thẻ âm (RÚT_ONLY => 0)
+  // 7) thẻ âm (RÚT_ONLY => 0)
   const totalDiff = totalBillAll - totalTransferAll;
   const negativeCardValue = mode === "RUT_ONLY" ? 0 : totalDiff < 0 ? Math.abs(totalDiff) : 0;
 
@@ -747,7 +791,8 @@ function recalcAll() {
     negEl.value = formatVND(negativeCardValue);
   }
 
-  // 9) tổng thu/trả
+  // 8) tổng thu/trả
+  const shipFee = getShipFee();
   let totalCollect = 0;
   let totalPay = 0;
   let forcePaidStatus = false;
@@ -767,24 +812,26 @@ function recalcAll() {
     totalCollect = 0;
     totalPay = 0;
   } else if (mode === "DAO_ONLY") {
+    // ĐÁO: phí = baseFee + ship + thẻ âm (có thể âm => chuyển sang trả khách)
     applyResult(baseFeeTotal + shipFee + negativeCardValue);
   } else if (mode === "DAO_RUT_ONLY") {
+    // ĐÁO+RÚT: phí = baseFee + ship + thẻ âm + thực thu (có thể âm)
     applyResult(baseFeeTotal + shipFee + negativeCardValue + actualFeeReceived);
   } else if (mode === "RUT_ONLY") {
-    // ✅ RÚT: trả khách = tổng tiền chuyển (đã trừ ship theo từng thẻ)
+    // RÚT: trả = tổng tiền chuyển; thu = baseFee + ship (✅ đã cộng ship)
     totalPay = totalTransferAll;
-    // ✅ thu khách = phí cơ bản + ship (ship thu thêm)
     totalCollect = baseFeeTotal + shipFee;
   } else {
-    // MIX => tính như ĐÁO+RÚT
+    // MIX: tính giống ĐÁO+RÚT (theo yêu cầu)
     applyResult(baseFeeTotal + shipFee + negativeCardValue + actualFeeReceived);
   }
 
-  // 10) update UI tổng
+  // 9) update UI tổng
   $("#totalBillAll").textContent = `${formatVND(totalBillAll)} VNĐ`;
   $("#totalFeeCollectedAll").textContent = `${formatVND(totalCollect)} VNĐ`;
   $("#totalCustomerPayment").textContent = `${formatVND(totalPay)} VNĐ`;
 
+  // fee status: âm => đã thu luôn; còn lại theo actualFeeReceived
   const payStatus = $("#feePaymentStatus");
   if (payStatus) {
     if (forcePaidStatus) payStatus.value = "da_thu";
@@ -799,19 +846,28 @@ function recalcAll() {
 ========================================================= */
 function cardTypeToText(v) {
   switch (String(v || "")) {
-    case "V": return "Visa";
-    case "M": return "MasterCard";
-    case "J": return "JCB";
-    case "n": return "Napas";
-    default: return String(v || "");
+    case "V":
+      return "Visa";
+    case "M":
+      return "MasterCard";
+    case "J":
+      return "JCB";
+    case "n":
+      return "Napas";
+    default:
+      return String(v || "");
   }
 }
 function serviceToText(v) {
   switch (String(v || "")) {
-    case "DAO": return "ĐÁO";
-    case "RUT": return "RÚT";
-    case "DAO_RUT": return "ĐÁO+RÚT";
-    default: return String(v || "");
+    case "DAO":
+      return "ĐÁO";
+    case "RUT":
+      return "RÚT";
+    case "DAO_RUT":
+      return "ĐÁO+RÚT";
+    default:
+      return String(v || "");
   }
 }
 function feeStatusToText(v) {
@@ -828,8 +884,8 @@ function collectPayloadForSheet() {
 
   const percentInfo = parsePercentVN($("#feePercentAll")?.value || "");
   const summary = {
-    feePercentAll: percentInfo.valid ? percentInfo.value : 0,
-    feePercentRaw: $("#feePercentAll")?.value || "",
+    feePercentAll: percentInfo.valid ? percentInfo.value : 0, // nếu % invalid => 0
+    feePercentRaw: $("#feePercentAll")?.value || "", // lưu raw để trace
     feeFixedAll: getFeeFixedInput(),
 
     returnFeePercentAll: Number($("#returnFeePercentAll")?.value || 0),
@@ -894,23 +950,119 @@ async function sendToGoogleSheet(payload) {
 }
 
 /* =========================================================
- 10) INIT + EVENTS
+ 10) RESET FORM (KHÔNG RELOAD)
+========================================================= */
+function setTodayForDateInput() {
+  const dateInput = $("#date");
+  if (!dateInput) return;
+
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  dateInput.value = `${yyyy}-${mm}-${dd}`;
+}
+
+/**
+ * Reset “sạch”:
+ * - Xóa các thẻ thêm, chỉ giữ lại thẻ #1
+ * - Reset thẻ #1 về trạng thái ban đầu
+ * - Reset mục 1 + mục 3
+ * - Recalc lại
+ * - Tạo submissionId mới cho lần gửi tiếp theo
+ */
+function resetFormAfterSubmit() {
+  const form = $("#mainForm");
+  if (!form) return;
+
+  // 1) reset native inputs về default
+  form.reset();
+
+  // 2) giữ lại 1 thẻ
+  const cards = getCardEls();
+  cards.slice(1).forEach((el) => el.remove());
+
+  // 3) reset thẻ #1
+  const firstCard = getCardEls()[0];
+  if (firstCard) {
+    const oldId = String(firstCard.dataset.cardId || "1");
+    if (oldId !== "1") updateCardIdentifiers(firstCard, oldId, "1");
+    resetCardValues(firstCard);
+    toggleServiceDetails("1", { recalc: false });
+  }
+
+  // 4) reset office/staff về trạng thái ban đầu
+  const officeEl = $("#office");
+  if (officeEl) {
+    officeEl.value = "";
+    officeEl.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  // 5) set lại ngày hôm nay
+  setTodayForDateInput();
+
+  // 6) reset fee inputs
+  const feePercent = $("#feePercentAll");
+  if (feePercent) feePercent.value = "";
+
+  showFeeFixedGroup(false);
+  const fixedEl = $("#feeFixedAll");
+  if (fixedEl) {
+    fixedEl.required = false;
+    fixedEl.value = "";
+  }
+
+  const shipEl = $("#shipFee");
+  if (shipEl) {
+    shipEl.value = "";
+    formatCurrencyInput(shipEl, true);
+  }
+
+  const actualEl = $("#actualFeeReceived");
+  if (actualEl) {
+    actualEl.value = "";
+    formatCurrencyInput(actualEl, true);
+  }
+
+  // negative luôn readonly (recalcAll sẽ set)
+  const neg = $("#negativeCardFee");
+  if (neg) {
+    neg.readOnly = true;
+    neg.tabIndex = -1;
+  }
+
+  // status về chưa thu
+  const payStatus = $("#feePaymentStatus");
+  if (payStatus) payStatus.value = "chua_thu";
+
+  // 7) init lại bill rows selects
+  $$(".bill-row").forEach(initBillRow);
+
+  // 8) update UI + recalc
+  updateCardLimitUI();
+  recalcAll();
+
+  // 9) submission id mới
+  CURRENT_SUBMISSION_ID = makeSubmissionId();
+
+  // 10) mở khóa submit cho lần tiếp theo
+  IS_SUBMITTING = false;
+}
+
+/* =========================================================
+ 11) INIT + EVENTS
 ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
-  const dateInput = $("#date");
-  if (dateInput && !dateInput.value) {
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-    const dd = String(now.getDate()).padStart(2, "0");
-    dateInput.value = `${yyyy}-${mm}-${dd}`;
-  }
+  // set date today
+  setTodayForDateInput();
 
   setupOfficeStaffLogic();
   updateReturnFeePercentAuto();
 
+  // init existing bill rows
   $$(".bill-row").forEach(initBillRow);
 
+  // format currency inputs
   $$(".currency-input").forEach((el) => {
     const allowEmpty =
       el.id === "actualFeeReceived" ||
@@ -921,12 +1073,14 @@ document.addEventListener("DOMContentLoaded", () => {
     formatCurrencyInput(el, allowEmpty);
   });
 
+  // thẻ âm readonly
   const neg = $("#negativeCardFee");
   if (neg) {
     neg.readOnly = true;
     neg.tabIndex = -1;
   }
 
+  // toggle card #1
   toggleServiceDetails("1", { recalc: false });
 
   updateCardLimitUI();
@@ -936,11 +1090,13 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("click", (e) => {
   const t = e.target;
 
+  // add card
   if (t?.id === "addCardBtn") {
     addNewCard();
     return;
   }
 
+  // remove card (giữ tối thiểu 1)
   if (t?.classList?.contains("remove-card-btn")) {
     if (getCardCount() <= 1) {
       alert("Mỗi đơn phải có ít nhất 1 thẻ. Không thể xóa thêm.");
@@ -952,11 +1108,13 @@ document.addEventListener("click", (e) => {
     return;
   }
 
+  // add bill
   if (t?.classList?.contains("add-bill-btn")) {
     addBillRow(t.dataset.cardId);
     return;
   }
 
+  // remove bill (giữ tối thiểu 1)
   if (t?.classList?.contains("remove-bill-btn")) {
     const row = t.closest(".bill-row");
     const card = t.closest(".card-item");
@@ -977,12 +1135,14 @@ document.addEventListener("click", (e) => {
 document.addEventListener("change", (e) => {
   const t = e.target;
 
+  // service selector
   if (t?.classList?.contains("service-selector")) {
     const cardId = t.closest(".card-item")?.dataset.cardId;
     if (cardId) toggleServiceDetails(cardId);
     return;
   }
 
+  // POS/HKD select in bill row
   const row = t?.closest?.(".bill-row");
   if (row) {
     if (t.classList.contains("pos-select")) onPosChange(row);
@@ -993,13 +1153,16 @@ document.addEventListener("change", (e) => {
 document.addEventListener("input", (e) => {
   const t = e.target;
 
+  // digits-only: 4 số thẻ
   if (String(t?.id || "").startsWith("cardNumber_")) {
     t.value = digitsOnly(t.value).slice(0, 4);
   }
+  // digits-only: lô/hóa đơn
   if (t?.classList?.contains("integer-only")) {
     t.value = digitsOnly(t.value);
   }
 
+  // currency format
   if (t?.classList?.contains("currency-input")) {
     const allowEmpty =
       t.id === "actualFeeReceived" ||
@@ -1010,15 +1173,26 @@ document.addEventListener("input", (e) => {
     formatCurrencyInput(t, allowEmpty);
   }
 
-  if (t?.id === "feePercentAll") { recalcAll(); return; }
-  if (t?.id === "feeFixedAll") { recalcAll(); return; }
-  if (t?.id === "shipFee" || t?.id === "actualFeeReceived") { recalcAll(); return; }
+  // recalc triggers
+  if (t?.id === "feePercentAll") {
+    recalcAll();
+    return;
+  }
+  if (t?.id === "feeFixedAll") {
+    recalcAll();
+    return;
+  }
+  if (t?.id === "shipFee" || t?.id === "actualFeeReceived") {
+    recalcAll();
+    return;
+  }
 
   if (t?.classList?.contains("bill-amount") || String(t?.id || "").startsWith("transferAmount_")) {
     recalcAll();
   }
 });
 
+// Submit: validate + gửi Google Sheet + reset form
 $("#mainForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (IS_SUBMITTING) return;
@@ -1089,12 +1263,15 @@ $("#mainForm")?.addEventListener("submit", async (e) => {
     }
   }
 
+  // đảm bảo tổng mới nhất
   recalcAll();
+
   const payload = collectPayloadForSheet();
 
   try {
     await sendToGoogleSheet(payload);
     alert("Đã gửi đơn thành công. Em Hằng xin cảm ơn anh chị ạ!");
+    resetFormAfterSubmit(); // ✅ reset form thay vì reload
   } catch (err) {
     console.error(err);
     alert("Gửi đơn thất bại. Liên hệ em Hằng báo lỗi.");
