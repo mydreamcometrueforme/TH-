@@ -105,6 +105,11 @@ function parsePercentVN(raw) {
   return { valid: true, value: n, normalized, isEmpty: false };
 }
 
+/**
+ * Chia 1 khoản tiền theo tỉ lệ bill:
+ * - total: số tiền cần chia
+ * - items: [{cardId, totalBill, ...}]
+ */
 function allocateByBill(total, items, getWeight) {
   const list = items.filter((x) => getWeight(x) > 0);
   const sumW = list.reduce((s, x) => s + getWeight(x), 0);
@@ -463,7 +468,6 @@ function toggleServiceDetails(cardId, opts = { recalc: true }) {
   fs.classList.toggle("hidden", !show);
   fs.disabled = !show;
 
-  // ✅ instant insert/remove
   if (service === "RUT") removeDifferenceRow(cardId);
   if (service === "DAO" || service === "DAO_RUT") ensureDifferenceRow(cardId);
 
@@ -485,7 +489,9 @@ function updateCardIdentifiers(cardEl, oldId, newId) {
   $$("[data-card-id]", cardEl).forEach((el) => (el.dataset.cardId = String(newId)));
   $$("[id]", cardEl).forEach((el) => (el.id = replaceCardToken(el.id, oldId, newId)));
   $$("[name]", cardEl).forEach((el) => (el.name = replaceCardToken(el.name, oldId, newId)));
-  $$("label[for]", cardEl).forEach((lb) => lb.setAttribute("for", replaceCardToken(lb.getAttribute("for"), oldId, newId)));
+  $$("label[for]", cardEl).forEach((lb) =>
+    lb.setAttribute("for", replaceCardToken(lb.getAttribute("for"), oldId, newId))
+  );
 }
 
 function resetCardValues(cardEl) {
@@ -506,7 +512,6 @@ function resetCardValues(cardEl) {
     fs.disabled = true;
   }
 
-  // clone không mang theo “Phí âm”
   removeDifferenceRow(cardId);
 
   const wrapper = $(`#billDetails_${cardId}`, cardEl);
@@ -588,13 +593,12 @@ function getFeeFixedInput() {
 }
 
 /**
- * ✅ Theo yêu cầu mới:
+ * ✅ Theo yêu cầu:
  * - % hợp lệ: ẨN phí cứng, KHÔNG auto
  * - % không hợp lệ: HIỆN phí cứng + bắt buộc nhập tay
  * - % rỗng: ẨN phí cứng
  */
 function syncFeeFixedFromPercent(totalBillAll) {
-  // totalBillAll giữ signature cho đồng bộ (không dùng nữa vì không auto)
   const percentInfo = parsePercentVN($("#feePercentAll")?.value || "");
   const fixedEl = $("#feeFixedAll");
   if (!fixedEl) return percentInfo;
@@ -610,7 +614,7 @@ function syncFeeFixedFromPercent(totalBillAll) {
 
 /**
  * ✅ Base fee tổng:
- * - % hợp lệ => tính theo %
+ * - % hợp lệ => tính theo % (trên totalBillAll)
  * - % không hợp lệ (có nhập) => dùng phí cứng user nhập
  * - % rỗng => 0
  */
@@ -667,7 +671,7 @@ function updateCardMetricsUI(cardId, totalBill, transfer, service) {
 function recalcAll() {
   const cardIds = getAllCardIds();
 
-  // 1) meta
+  // 1) meta: tổng bill + list thẻ
   let totalBillAll = 0;
   const meta = cardIds.map((cardId) => {
     const totalBill = getCardBillTotal(cardId);
@@ -680,16 +684,23 @@ function recalcAll() {
   const percentInfo = syncFeeFixedFromPercent(totalBillAll);
   const baseFeeTotal = getBaseFeeTotal(totalBillAll, percentInfo);
 
-  // 3) share baseFee cho các thẻ có service (để RÚT auto tiền chuyển)
+  // 3) đọc ship & thực thu (cần cho auto transfer RÚT)
+  const shipFee = getShipFee();
+  const actualFeeReceived = getActualFeeReceived();
+
+  // 4) chia phí (base fee) theo bill cho các thẻ có service
   const cardsWithService = meta.filter((c) => !!c.service);
   const feeShareMap = allocateByBill(baseFeeTotal, cardsWithService, (c) => c.totalBill);
 
-  // 4) share actualFee cho thẻ RÚT
-  const actualFeeReceived = getActualFeeReceived();
+  // 5) chia thực thu cho các thẻ RÚT (để cộng vào auto transfer)
   const withdrawCards = meta.filter((c) => c.service === "RUT");
   const actualShareMap = allocateByBill(actualFeeReceived, withdrawCards, (c) => c.totalBill);
 
-  // 5) tính transfer per-card
+  // ✅ FIX BUG: chia shipFee cho các thẻ RÚT để TRỪ vào auto transfer
+  // (vì ship là phí thu thêm => giảm số tiền trả khách)
+  const shipShareMap = allocateByBill(shipFee, withdrawCards, (c) => c.totalBill);
+
+  // 6) tính transfer per-card
   let totalTransferAll = 0;
   const serviceSet = new Set();
 
@@ -700,10 +711,11 @@ function recalcAll() {
     const transferEl = $(`#transferAmount_${cardId}`);
     const feeShare = feeShareMap.get(cardId) || 0;
     const actualShare = actualShareMap.get(cardId) || 0;
+    const shipShare = shipShareMap.get(cardId) || 0;
 
-    // RÚT: auto Transfer = Bill - FeeShare + ActualShare
+    // ✅ RÚT: auto Transfer = Bill - FeeShare - ShipShare + ActualShare
     if (service === "RUT" && transferEl) {
-      const autoTransfer = Math.max(0, totalBill - feeShare + actualShare);
+      const autoTransfer = Math.max(0, totalBill - feeShare - shipShare + actualShare);
       lockTransferInput(transferEl, true);
       transferEl.value = autoTransfer > 0 ? formatVND(autoTransfer) : "0";
     } else {
@@ -716,7 +728,7 @@ function recalcAll() {
     updateCardMetricsUI(cardId, totalBill, transfer, service);
   });
 
-  // 6) mode
+  // 7) xác định mode
   const onlyService = serviceSet.size === 1 ? [...serviceSet][0] : "";
   let mode = "";
   if (serviceSet.size === 1 && onlyService === "RUT") mode = "RUT_ONLY";
@@ -724,7 +736,7 @@ function recalcAll() {
   else if (serviceSet.size === 1 && onlyService === "DAO_RUT") mode = "DAO_RUT_ONLY";
   else if (serviceSet.size >= 2) mode = "MIX";
 
-  // 7) thẻ âm (RÚT_ONLY => 0)
+  // 8) thẻ âm (RÚT_ONLY => 0)
   const totalDiff = totalBillAll - totalTransferAll;
   const negativeCardValue = mode === "RUT_ONLY" ? 0 : totalDiff < 0 ? Math.abs(totalDiff) : 0;
 
@@ -735,8 +747,7 @@ function recalcAll() {
     negEl.value = formatVND(negativeCardValue);
   }
 
-  // 8) tổng thu/trả
-  const shipFee = getShipFee();
+  // 9) tổng thu/trả
   let totalCollect = 0;
   let totalPay = 0;
   let forcePaidStatus = false;
@@ -760,14 +771,16 @@ function recalcAll() {
   } else if (mode === "DAO_RUT_ONLY") {
     applyResult(baseFeeTotal + shipFee + negativeCardValue + actualFeeReceived);
   } else if (mode === "RUT_ONLY") {
+    // ✅ RÚT: trả khách = tổng tiền chuyển (đã trừ ship theo từng thẻ)
     totalPay = totalTransferAll;
+    // ✅ thu khách = phí cơ bản + ship (ship thu thêm)
     totalCollect = baseFeeTotal + shipFee;
   } else {
     // MIX => tính như ĐÁO+RÚT
     applyResult(baseFeeTotal + shipFee + negativeCardValue + actualFeeReceived);
   }
 
-  // 9) update UI tổng
+  // 10) update UI tổng
   $("#totalBillAll").textContent = `${formatVND(totalBillAll)} VNĐ`;
   $("#totalFeeCollectedAll").textContent = `${formatVND(totalCollect)} VNĐ`;
   $("#totalCustomerPayment").textContent = `${formatVND(totalPay)} VNĐ`;
